@@ -167,7 +167,7 @@ def summarize_article(client, model_name: str, article: dict, length: int) -> st
 【タイトル】{article['title']}
 
 【本文】
-{article.get('body', '')[:2000]}
+{article.get('body', '')[:500]}
 
 要約（{length}字程度）:"""
 

@@ -36,9 +36,11 @@ jobs:
         run: python scraper.py
 
       - name: articles.json をコミット＆プッシュ
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/articles.json
           git diff --cached --quiet || git commit -m "📰 $(date +'%Y-%m-%d') 記事更新"
-          git push
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git

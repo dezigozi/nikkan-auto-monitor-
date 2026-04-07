@@ -479,7 +479,7 @@ function app() {
           message_format: 'title_and_summary',
         },
         schedule: { time: '07:00', days: ['月','火','水','木','金'] },
-        claude: { model: 'claude-opus-4-6', summary_length: 150 },
+        gemini: { model: 'gemini-1.5-flash', summary_length: 150 },
         output: { data_dir: 'data', articles_file: 'data/articles.json' },
       };
       const blob = new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' });

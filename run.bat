@@ -14,8 +14,8 @@ if errorlevel 1 (
     python -m playwright install chromium
 )
 
-:: ---- ANTHROPIC API KEY（未設定の場合はここに入力）----
-:: set ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxxxxxxxx
+:: ---- GEMINI API KEY（未設定の場合はここに入力）----
+:: set GEMINI_API_KEY=AIzaSy_xxxxxxxxxxxxxxxxxxxxxxxxxx
 
 :: ---- 実行 ----
 echo.

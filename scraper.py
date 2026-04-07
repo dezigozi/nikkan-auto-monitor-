@@ -1,7 +1,7 @@
 """
 日刊自動車新聞 トピックスモニター - バックエンド
   1. netdenjd.com にログインして記事一覧を取得
-  2. キーワードにヒットした記事を Claude で要約
+  2. キーワードにヒットした記事を Gemini で要約
   3. Slack に投稿
   4. data/articles.json に保存（フロントエンドが読む）
 """
@@ -17,7 +17,7 @@ from pathlib import Path
 # --- サードパーティ ---
 try:
     from playwright.async_api import async_playwright
-    import anthropic
+    import google.generativeai as genai
     import requests
 except ImportError as e:
     print(f"[ERROR] 依存パッケージが不足しています: {e}")
@@ -157,9 +157,9 @@ def filter_by_keywords(articles: list[dict], keywords: list[str]) -> list[dict]:
 
 
 # =====================
-#  Claude で要約
+#  Gemini で要約
 # =====================
-def summarize_article(client: anthropic.Anthropic, article: dict, length: int) -> str:
+def summarize_article(model, article: dict, length: int) -> str:
     prompt = f"""以下の自動車業界ニュース記事を、{length}字程度で日本語要約してください。
 重要なポイント（数字・企業名・新技術・市場動向）を含めて簡潔にまとめてください。
 
@@ -170,12 +170,8 @@ def summarize_article(client: anthropic.Anthropic, article: dict, length: int) -
 
 要約（{length}字程度）:"""
 
-    msg = client.messages.create(
-        model="claude-opus-4-6",
-        max_tokens=400,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return msg.content[0].text.strip()
+    response = model.generate_content(prompt)
+    return response.text.strip()
 
 
 # =====================
@@ -302,18 +298,19 @@ async def main():
         save_articles(cfg, [], date_str, len(all_articles))
         return
 
-    # 3. Claude で要約
-    print("\n[4/4] Claude で要約中...")
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    # 3. Gemini で要約
+    print("\n[4/4] Gemini で要約中...")
+    api_key = os.environ.get("GEMINI_API_KEY", "")
     if not api_key:
-        print("   [WARN] ANTHROPIC_API_KEY が未設定のため要約をスキップします")
+        print("   [WARN] GEMINI_API_KEY が未設定のため要約をスキップします")
         for art in matched:
-            art["summary"] = "（要約未実行 — ANTHROPIC_API_KEY を設定してください）"
+            art["summary"] = "（要約未実行 — GEMINI_API_KEY を設定してください）"
     else:
-        client = anthropic.Anthropic(api_key=api_key)
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel(cfg["gemini"]["model"])
         for i, art in enumerate(matched, 1):
             print(f"   {i}/{len(matched)}: {art['title'][:40]}...")
-            art["summary"] = summarize_article(client, art, cfg["claude"]["summary_length"])
+            art["summary"] = summarize_article(model, art, cfg["gemini"]["summary_length"])
 
     # 4. Slack 投稿
     print("\n[Slack] 投稿中...")

@@ -205,10 +205,8 @@
                   :class="{
                     'bg-amber-100 text-amber-700':  tag==='リビルト',
                     'bg-sky-100 text-sky-700':      tag==='オートリース',
-                    'bg-violet-100 text-violet-700':tag==='パナソニック',
                     'bg-teal-100 text-teal-700':    tag==='カーナビ',
-                    'bg-rose-100 text-rose-700':    tag==='採用',
-                    'bg-slate-100 text-slate-600':  !['リビルト','オートリース','パナソニック','カーナビ','採用'].includes(tag),
+                    'bg-slate-100 text-slate-600':  !['リビルト','オートリース','カーナビ'].includes(tag),
                   }"
                   x-text="tag">
                 </span>
@@ -381,7 +379,7 @@ function app() {
     todayScanned: 0,
     history: [],       // articles.json の全データ
     settings: {
-      keywords: ['リビルト','オートリース','パナソニック','カーナビ','採用'],
+      keywords: ['リビルト','オートリース','カーナビ'],
       source: { username: '', password: '' },
       slack: { webhook_url: '', channel: '#auto-news' },
     },

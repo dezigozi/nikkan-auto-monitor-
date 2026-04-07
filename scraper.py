@@ -67,7 +67,7 @@ async def scrape_articles(cfg: dict) -> list[dict]:
 
         # --- ログイン ---
         print("[1/4] ログイン中...")
-        await page.goto(cfg["source"]["login_url"], wait_until="networkidle")
+        await page.goto(cfg["source"]["login_url"], wait_until="domcontentloaded", timeout=30000)
 
         # ログインフォームへの入力（セレクタはサイト構造に合わせて要調整）
         try:
@@ -76,14 +76,14 @@ async def scrape_articles(cfg: dict) -> list[dict]:
             await page.fill('input[name="password"], input[type="password"]',
                             cfg["source"]["password"])
             await page.click('button[type="submit"], input[type="submit"]')
-            await page.wait_for_load_state("networkidle")
+            await page.wait_for_load_state("domcontentloaded", timeout=30000)
             print("   → ログイン完了")
         except Exception as e:
             print(f"   [WARN] ログイン操作に問題が発生しました: {e}")
 
         # --- 記事一覧ページへ ---
         print("[2/4] 記事一覧を取得中...")
-        await page.goto(cfg["source"]["url"], wait_until="networkidle")
+        await page.goto(cfg["source"]["url"], wait_until="domcontentloaded", timeout=30000)
 
         # 記事リンクを収集（セレクタはサイト構造に合わせて要調整）
         links = await page.eval_on_selector_all(

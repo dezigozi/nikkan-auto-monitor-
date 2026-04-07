@@ -1,0 +1,11 @@
+# config.json はパスワードを含むためGitHub上では管理しない
+# → GitHub Secrets に直接入力する
+config.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Windows
+Thumbs.db

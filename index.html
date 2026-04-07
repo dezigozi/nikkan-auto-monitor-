@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日刊自動車新聞 トピックスモニター</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+    body { font-family: 'Noto Sans JP', sans-serif; }
+    .card-hover { transition: box-shadow .15s, transform .15s; }
+    .card-hover:hover { box-shadow: 0 4px 16px rgba(0,0,0,.10); transform: translateY(-1px); }
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen" x-data="app()" x-init="init()">
+
+<!-- ===== ヘッダー ===== -->
+<header class="bg-gradient-to-r from-stone-900 to-stone-700 text-white shadow-md sticky top-0 z-30">
+  <div class="max-w-screen-xl mx-auto px-5 py-3 flex items-center gap-4">
+    <div class="bg-red-700 text-white text-xs font-bold px-2 py-1 rounded tracking-widest">AUTO</div>
+    <div class="flex-1">
+      <h1 class="font-bold text-lg leading-tight tracking-wide">日刊自動車新聞 トピックスモニター</h1>
+      <p class="text-stone-400 text-xs">netdenjd.com 記事自動収集・要約</p>
+    </div>
+    <div class="flex items-center gap-5">
+      <nav class="flex gap-1 text-sm">
+        <button @click="tab='report'"
+          :class="tab==='report' ? 'bg-white/15 text-white' : 'text-stone-300 hover:text-white'"
+          class="px-3 py-1.5 rounded-md transition-colors">レポート</button>
+        <button @click="tab='settings'"
+          :class="tab==='settings' ? 'bg-white/15 text-white' : 'text-stone-300 hover:text-white'"
+          class="px-3 py-1.5 rounded-md transition-colors flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>設定
+        </button>
+      </nav>
+      <div class="text-right border-l border-stone-600 pl-5">
+        <div class="flex items-center gap-1.5 justify-end">
+          <span class="w-2 h-2 rounded-full pulse" :class="loading ? 'bg-yellow-400' : 'bg-green-400'"></span>
+          <span class="text-xs" :class="loading ? 'text-yellow-400' : 'text-green-400'"
+            x-text="loading ? '取得中...' : '自動取得 ON'"></span>
+        </div>
+        <p class="text-stone-300 text-xs mt-0.5" x-text="todayLabel + ' 最終更新 ' + fetchedAt"></p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== レポートタブ ===== -->
+<div x-show="tab==='report'" class="max-w-screen-xl mx-auto px-5 py-6 flex gap-5">
+
+  <!-- サイドバー -->
+  <aside class="w-64 flex-shrink-0 space-y-4">
+
+    <!-- 実行 -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">実行</h2>
+      <button @click="reload()"
+        class="w-full bg-red-700 hover:bg-red-800 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" :class="loading && 'animate-spin'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        <span x-text="loading ? '読み込み中...' : '最新データを取得'"></span>
+      </button>
+      <p class="text-slate-400 text-xs mt-2 text-center">次回自動実行：毎朝 07:00</p>
+    </div>
+
+    <!-- 統計 -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">本日の結果</h2>
+      <div class="grid grid-cols-2 gap-2">
+        <div class="bg-red-50 rounded-lg p-3 text-center">
+          <div class="text-2xl font-bold text-red-700" x-text="todayArticles.length"></div>
+          <div class="text-xs text-slate-500 mt-0.5">ヒット記事</div>
+        </div>
+        <div class="bg-slate-50 rounded-lg p-3 text-center">
+          <div class="text-2xl font-bold text-slate-700" x-text="todayScanned"></div>
+          <div class="text-xs text-slate-500 mt-0.5">スキャン数</div>
+        </div>
+        <div class="bg-slate-50 rounded-lg p-3 text-center">
+          <div class="text-2xl font-bold text-slate-700" x-text="settings.keywords.length"></div>
+          <div class="text-xs text-slate-500 mt-0.5">監視KW数</div>
+        </div>
+        <div class="bg-green-50 rounded-lg p-3 text-center">
+          <div class="text-sm font-bold text-green-700 mt-1" x-text="todayArticles.length > 0 ? '完了' : '待機中'"></div>
+          <div class="text-xs text-slate-500 mt-0.5">ステータス</div>
+        </div>
+      </div>
+      <!-- Slack -->
+      <div class="mt-3 bg-slate-50 rounded-lg px-3 py-2 flex items-center gap-2">
+        <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+        </svg>
+        <div class="flex-1">
+          <p class="text-xs font-medium text-slate-600" x-text="settings.slack.channel || 'Slack未設定'"></p>
+          <p class="text-xs text-slate-400" x-text="fetchedAt ? '送信済み ' + fetchedAt : '未送信'"></p>
+        </div>
+        <span class="w-2 h-2 rounded-full" :class="settings.slack.webhook_url ? 'bg-green-500' : 'bg-slate-300'"></span>
+      </div>
+    </div>
+
+    <!-- 監視KW -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest">監視キーワード</h2>
+        <button @click="tab='settings'" class="text-red-600 text-xs hover:underline">編集 →</button>
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        <template x-for="kw in kwStats" :key="kw.name">
+          <span class="flex items-center gap-1 text-xs px-2 py-1 rounded-full"
+            :class="kw.count > 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-500'">
+            <span x-text="kw.name"></span>
+            <span x-show="kw.count > 0" class="font-bold" x-text="kw.count"></span>
+          </span>
+        </template>
+      </div>
+    </div>
+
+    <!-- 過去レポート -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">過去のレポート</h2>
+      <ul class="space-y-1">
+        <template x-for="entry in history" :key="entry.date">
+          <li>
+            <button @click="selectDate(entry.date)"
+              class="w-full text-left text-xs px-2 py-1.5 rounded flex justify-between transition-colors"
+              :class="selectedDate === entry.date ? 'bg-red-50 text-red-700 font-medium' : 'hover:bg-slate-50 text-slate-600'">
+              <span x-text="entry.date"></span>
+              <span class="text-slate-400" x-text="entry.articles.length + '件'"></span>
+            </button>
+          </li>
+        </template>
+        <template x-if="history.length === 0">
+          <li class="text-xs text-slate-400 px-2 py-1">データなし</li>
+        </template>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- メインコンテンツ -->
+  <main class="flex-1 min-w-0 space-y-4">
+
+    <!-- フィルターバー -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-2.5 flex items-center gap-2 flex-wrap">
+      <span class="text-xs text-slate-400 mr-1">絞り込み:</span>
+      <button @click="filterKw = ''"
+        :class="filterKw === '' ? 'bg-red-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+        class="text-xs px-3 py-1 rounded-full font-medium transition-colors"
+        x-text="'すべて (' + displayArticles.length + ')'">
+      </button>
+      <template x-for="kw in kwStats.filter(k => k.count > 0)" :key="kw.name">
+        <button @click="filterKw = kw.name"
+          :class="filterKw === kw.name ? 'bg-red-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+          class="text-xs px-3 py-1 rounded-full transition-colors"
+          x-text="kw.name + ' (' + kw.count + ')'">
+        </button>
+      </template>
+      <div class="ml-auto flex items-center gap-3">
+        <button @click="exportMarkdown()"
+          class="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>MD出力
+        </button>
+      </div>
+    </div>
+
+    <!-- 日付区切り -->
+    <div class="flex items-center gap-3">
+      <div class="h-px bg-slate-300 flex-1"></div>
+      <span class="text-xs font-semibold text-slate-500 whitespace-nowrap"
+        x-text="selectedDate + '— ' + displayArticles.length + '件ヒット'"></span>
+      <div class="h-px bg-slate-300 flex-1"></div>
+    </div>
+
+    <!-- ローディング -->
+    <div x-show="loading" class="bg-white rounded-xl border border-slate-200 p-8 text-center">
+      <div class="w-8 h-8 border-2 border-red-700 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+      <p class="text-sm text-slate-500">データを読み込み中...</p>
+    </div>
+
+    <!-- 記事なし -->
+    <div x-show="!loading && filteredArticles.length === 0"
+      class="bg-white rounded-xl border border-slate-200 p-8 text-center">
+      <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <p class="text-sm text-slate-500">該当記事がありません</p>
+      <p class="text-xs text-slate-400 mt-1">scraper.py を実行すると記事が表示されます</p>
+    </div>
+
+    <!-- 記事カード -->
+    <template x-for="article in filteredArticles" :key="article.id">
+      <div class="card-hover bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+        <div class="flex gap-4">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap mb-2">
+              <template x-for="tag in article.tags" :key="tag">
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full"
+                  :class="{
+                    'bg-amber-100 text-amber-700':  tag==='リビルト',
+                    'bg-sky-100 text-sky-700':      tag==='オートリース',
+                    'bg-violet-100 text-violet-700':tag==='パナソニック',
+                    'bg-teal-100 text-teal-700':    tag==='カーナビ',
+                    'bg-rose-100 text-rose-700':    tag==='採用',
+                    'bg-slate-100 text-slate-600':  !['リビルト','オートリース','パナソニック','カーナビ','採用'].includes(tag),
+                  }"
+                  x-text="tag">
+                </span>
+              </template>
+              <span class="text-slate-400 text-xs ml-auto flex-shrink-0"
+                x-text="article.time ? article.time + '掲載' : ''"></span>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base leading-snug mb-2" x-text="article.title"></h3>
+            <p class="text-slate-600 text-sm leading-relaxed" x-text="article.summary"></p>
+            <div class="flex items-center gap-4 mt-3">
+              <a :href="article.url" target="_blank" rel="noopener"
+                class="text-red-600 text-xs hover:underline font-medium flex items-center gap-1">
+                元記事を読む
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="w-20 h-20 bg-slate-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+            <svg class="w-9 h-9 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </template>
+
+  </main>
+</div>
+
+<!-- ===== 設定タブ ===== -->
+<div x-show="tab==='settings'" class="max-w-screen-xl mx-auto px-5 py-6 space-y-6">
+  <h2 class="text-lg font-bold text-slate-800">設定</h2>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- キーワード -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+      <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2">
+        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+        </svg>監視キーワード
+      </h3>
+      <p class="text-xs text-slate-400 mb-4">ヒットした記事をAI要約してSlackとアプリに表示します</p>
+      <div class="space-y-2 mb-4">
+        <template x-for="(kw, i) in settings.keywords" :key="i">
+          <div class="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">
+            <div class="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
+            <input type="text" :value="kw" @change="settings.keywords[i] = $event.target.value"
+              class="flex-1 text-sm bg-transparent border-none focus:outline-none text-slate-700 font-medium">
+            <button @click="settings.keywords.splice(i,1)"
+              class="text-slate-300 hover:text-red-500 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+        </template>
+      </div>
+      <div class="flex gap-2">
+        <input x-model="newKeyword" type="text" placeholder="新しいキーワードを入力..."
+          @keydown.enter="addKeyword()"
+          class="flex-1 text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400">
+        <button @click="addKeyword()"
+          class="bg-red-700 hover:bg-red-800 text-white text-sm px-4 py-2 rounded-lg transition-colors font-medium">追加</button>
+      </div>
+      <p class="text-xs text-slate-400 mt-2">※ 変更は config.json に保存後、次回 scraper.py 実行から反映</p>
+      <div class="mt-4 pt-4 border-t border-slate-100 flex justify-end">
+        <button @click="saveSettings()"
+          class="bg-slate-800 hover:bg-slate-900 text-white text-sm px-5 py-2 rounded-lg transition-colors font-medium">保存する</button>
+      </div>
+    </div>
+
+    <!-- データソース -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+      <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2">
+        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+        </svg>データソース（日刊自動車新聞）
+      </h3>
+      <p class="text-xs text-slate-400 mb-4">netdenjd.com へのログイン情報（config.json に保存）</p>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">サイトURL</label>
+          <input type="text" value="https://www.netdenjd.com/"
+            class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-500 focus:outline-none" readonly>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">ログインID</label>
+          <input type="text" x-model="settings.source.username" placeholder="登録メールアドレス / ID"
+            class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">パスワード</label>
+          <input type="password" x-model="settings.source.password" placeholder="••••••••••"
+            class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400">
+        </div>
+        <div class="flex justify-end pt-1">
+          <button @click="saveSettings()"
+            class="bg-slate-800 hover:bg-slate-900 text-white text-sm px-5 py-2 rounded-lg transition-colors font-medium">保存する</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slack -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+      <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2">
+        <svg class="w-5 h-5 text-[#4A154B]" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+        </svg>Slack 通知設定
+      </h3>
+      <p class="text-xs text-slate-400 mb-4">取得・要約完了後に自動投稿</p>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Webhook URL</label>
+          <input type="text" x-model="settings.slack.webhook_url"
+            placeholder="https://hooks.slack.com/services/..."
+            class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400 font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">投稿チャンネル</label>
+          <input type="text" x-model="settings.slack.channel" placeholder="#auto-news"
+            class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400">
+        </div>
+        <div class="flex justify-end pt-1">
+          <button @click="saveSettings()"
+            class="bg-slate-800 hover:bg-slate-900 text-white text-sm px-5 py-2 rounded-lg transition-colors font-medium">保存する</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- スケジュール -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+      <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2">
+        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>実行スケジュール
+      </h3>
+      <p class="text-xs text-slate-400 mb-4">Windows タスクスケジューラで run.bat を登録してください</p>
+      <div class="bg-slate-800 rounded-lg p-4 font-mono text-xs text-green-400 leading-relaxed">
+        <p class="text-slate-400"># タスクスケジューラに登録するコマンド</p>
+        <p>schtasks /create /tn "AutoNews"</p>
+        <p>&nbsp; /tr "C:\path\to\run.bat"</p>
+        <p>&nbsp; /sc daily /st 07:00</p>
+        <p>&nbsp; /ru SYSTEM</p>
+      </div>
+      <p class="text-xs text-slate-400 mt-3">※ 詳細は run.bat 内のコメントを参照してください</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- フッター -->
+<footer class="border-t border-slate-200 mt-8 py-4">
+  <div class="max-w-screen-xl mx-auto px-5 flex items-center justify-between text-xs text-slate-400">
+    <span>日刊自動車新聞 トピックスモニター v1.0</span>
+    <span>データソース: netdenjd.com</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script>
+function app() {
+  return {
+    tab: 'report',
+    loading: false,
+    newKeyword: '',
+    filterKw: '',
+    selectedDate: '',
+    fetchedAt: '',
+    todayScanned: 0,
+    history: [],       // articles.json の全データ
+    settings: {
+      keywords: ['リビルト','オートリース','パナソニック','カーナビ','採用'],
+      source: { username: '', password: '' },
+      slack: { webhook_url: '', channel: '#auto-news' },
+    },
+
+    async init() {
+      await this.reload();
+      await this.loadConfig();
+    },
+
+    // articles.json を読み込む
+    async reload() {
+      this.loading = true;
+      try {
+        const res = await fetch('data/articles.json?t=' + Date.now());
+        if (res.ok) {
+          this.history = await res.json();
+          if (this.history.length > 0) {
+            const latest = this.history[0];
+            this.selectedDate = latest.date;
+            this.fetchedAt = latest.fetched_at || '';
+            this.todayScanned = latest.scanned || 0;
+          }
+        }
+      } catch(e) {
+        // ファイルなし = 初回起動
+      }
+      this.loading = false;
+    },
+
+    // config.json を読み込む（キーワード等を設定タブに反映）
+    async loadConfig() {
+      try {
+        const res = await fetch('config.json?t=' + Date.now());
+        if (res.ok) {
+          const cfg = await res.json();
+          if (cfg.keywords) this.settings.keywords = cfg.keywords;
+          if (cfg.source)   this.settings.source   = cfg.source;
+          if (cfg.slack)    this.settings.slack     = cfg.slack;
+        }
+      } catch(e) {}
+    },
+
+    selectDate(date) {
+      this.selectedDate = date;
+      this.filterKw = '';
+    },
+
+    // 選択中の日付の記事
+    get displayArticles() {
+      const entry = this.history.find(e => e.date === this.selectedDate);
+      return entry ? entry.articles : [];
+    },
+
+    // フィルタ後の記事
+    get filteredArticles() {
+      if (!this.filterKw) return this.displayArticles;
+      return this.displayArticles.filter(a => a.tags && a.tags.includes(this.filterKw));
+    },
+
+    // 今日表示のKWごとの件数
+    get kwStats() {
+      return this.settings.keywords.map(kw => ({
+        name: kw,
+        count: this.displayArticles.filter(a => a.tags && a.tags.includes(kw)).length
+      }));
+    },
+
+    // 今日のラベル
+    get todayLabel() {
+      return this.selectedDate || '—';
+    },
+
+    addKeyword() {
+      const kw = this.newKeyword.trim();
+      if (kw && !this.settings.keywords.includes(kw)) {
+        this.settings.keywords.push(kw);
+        this.newKeyword = '';
+      }
+    },
+
+    saveSettings() {
+      // ブラウザからは config.json を直接書き込めないため、ダウンロードして置き換えてもらう
+      const cfg = {
+        source: {
+          url: 'https://www.netdenjd.com/',
+          login_url: 'https://www.netdenjd.com/login',
+          username: this.settings.source.username,
+          password: this.settings.source.password,
+        },
+        keywords: this.settings.keywords,
+        slack: {
+          webhook_url: this.settings.slack.webhook_url,
+          channel: this.settings.slack.channel,
+          message_format: 'title_and_summary',
+        },
+        schedule: { time: '07:00', days: ['月','火','水','木','金'] },
+        claude: { model: 'claude-opus-4-6', summary_length: 150 },
+        output: { data_dir: 'data', articles_file: 'data/articles.json' },
+      };
+      const blob = new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'config.json';
+      a.click();
+      alert('config.json をダウンロードしました。\n日刊レポートフォルダの config.json と置き換えてください。');
+    },
+
+    exportMarkdown() {
+      const lines = [`# ${this.selectedDate} 日刊自動車新聞 トピックスモニター\n`];
+      for (const art of this.displayArticles) {
+        lines.push(`## ${art.title}`);
+        lines.push(`**キーワード**: ${art.tags.join(', ')}`);
+        lines.push(`**要約**: ${art.summary}`);
+        lines.push(`**元記事**: ${art.url}\n`);
+      }
+      const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `auto-news-${this.selectedDate}.md`;
+      a.click();
+    },
+  }
+}
+</script>
+</body>
+</html>

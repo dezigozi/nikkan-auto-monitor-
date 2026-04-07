@@ -17,7 +17,7 @@ from pathlib import Path
 # --- サードパーティ ---
 try:
     from playwright.async_api import async_playwright
-    import google.generativeai as genai
+    from google import genai
     import requests
 except ImportError as e:
     print(f"[ERROR] 依存パッケージが不足しています: {e}")
@@ -159,7 +159,7 @@ def filter_by_keywords(articles: list[dict], keywords: list[str]) -> list[dict]:
 # =====================
 #  Gemini で要約
 # =====================
-def summarize_article(model, article: dict, length: int) -> str:
+def summarize_article(client, model_name: str, article: dict, length: int) -> str:
     prompt = f"""以下の自動車業界ニュース記事を、{length}字程度で日本語要約してください。
 重要なポイント（数字・企業名・新技術・市場動向）を含めて簡潔にまとめてください。
 
@@ -170,7 +170,7 @@ def summarize_article(model, article: dict, length: int) -> str:
 
 要約（{length}字程度）:"""
 
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model=model_name, contents=prompt)
     return response.text.strip()
 
 
@@ -306,11 +306,11 @@ async def main():
         for art in matched:
             art["summary"] = "（要約未実行 — GEMINI_API_KEY を設定してください）"
     else:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(cfg["gemini"]["model"])
+        client = genai.Client(api_key=api_key)
+        model_name = cfg["gemini"]["model"]
         for i, art in enumerate(matched, 1):
             print(f"   {i}/{len(matched)}: {art['title'][:40]}...")
-            art["summary"] = summarize_article(model, art, cfg["gemini"]["summary_length"])
+            art["summary"] = summarize_article(client, model_name, art, cfg["gemini"]["summary_length"])
 
     # 4. Slack 投稿
     print("\n[Slack] 投稿中...")

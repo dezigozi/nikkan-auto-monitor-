@@ -22,7 +22,7 @@
     "days": ["月", "火", "水", "木", "金"]
   },
   "gemini": {
-    "model": "gemini-1.5-flash",
+    "model": "gemini-2.0-flash",
     "summary_length": 150
   },
   "output": {

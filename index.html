@@ -216,9 +216,8 @@
               <span class="text-slate-400 text-xs ml-auto flex-shrink-0"
                 x-text="article.time ? article.time + '掲載' : ''"></span>
             </div>
-            <h3 class="font-bold text-slate-900 text-base leading-snug mb-2" x-text="article.title"></h3>
-            <p class="text-slate-600 text-sm leading-relaxed" x-text="article.summary"></p>
-            <div class="flex items-center gap-4 mt-3">
+            <h3 class="font-bold text-slate-900 text-base leading-snug mb-3" x-text="article.title"></h3>
+            <div class="flex items-center gap-4">
               <a :href="article.url" target="_blank" rel="noopener"
                 class="text-red-600 text-xs hover:underline font-medium flex items-center gap-1">
                 元記事を読む
@@ -252,7 +251,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
         </svg>監視キーワード
       </h3>
-      <p class="text-xs text-slate-400 mb-4">ヒットした記事をAI要約してSlackとアプリに表示します</p>
+      <p class="text-xs text-slate-400 mb-4">ヒットした記事をキーワード別に分類して、SlackとアプリにKWごとに表示します</p>
       <div class="space-y-2 mb-4">
         <template x-for="(kw, i) in settings.keywords" :key="i">
           <div class="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">

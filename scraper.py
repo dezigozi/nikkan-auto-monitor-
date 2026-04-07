@@ -146,11 +146,11 @@ async def scrape_articles(cfg: dict) -> list[dict]:
 #  キーワードフィルタリング
 # =====================
 def filter_by_keywords(articles: list[dict], keywords: list[str]) -> list[dict]:
-    """タイトルまたは本文にキーワードを含む記事を返す"""
+    """タイトルにキーワードを含む記事を返す（厳密マッチ）"""
     results = []
     for art in articles:
-        matched = [kw for kw in keywords
-                   if kw in art["title"] or kw in art.get("body", "")]
+        # タイトルのみをチェック（本文は誤検出が多いため）
+        matched = [kw for kw in keywords if kw in art["title"]]
         if matched:
             art["tags"] = matched
             results.append(art)
@@ -213,8 +213,7 @@ def post_to_slack(cfg: dict, articles: list[dict], date_str: str):
                 "type": "mrkdwn",
                 "text": (
                     f"{tag_text}\n"
-                    f"*<{art['url']}|{art['title']}>*\n"
-                    f"{art.get('summary', '')}"
+                    f"*<{art['url']}|{art['title']}>*"
                 )
             }
         })
@@ -254,7 +253,6 @@ def save_articles(cfg: dict, articles: list[dict], date_str: str, all_count: int
                 "tags": art["tags"],
                 "time": art.get("fetched_time", ""),
                 "title": art["title"],
-                "summary": art.get("summary", ""),
                 "url": art["url"],
             }
             for i, art in enumerate(articles)
@@ -299,24 +297,8 @@ async def main():
         save_articles(cfg, [], date_str, len(all_articles))
         return
 
-    # 3. Gemini で要約
-    print("\n[4/4] Gemini で要約中...")
-    api_key = os.environ.get("GEMINI_API_KEY", "")
-    if not api_key:
-        print("   [WARN] GEMINI_API_KEY が未設定のため要約をスキップします")
-        for art in matched:
-            art["summary"] = "（要約未実行 — GEMINI_API_KEY を設定してください）"
-    else:
-        client = genai.Client(api_key=api_key)
-        model_name = cfg["gemini"]["model"]
-        for i, art in enumerate(matched[:20], 1):   # 無料枠: 上限20件
-            print(f"   {i}/{min(len(matched),20)}: {art['title'][:40]}...")
-            try:
-                art["summary"] = summarize_article(client, model_name, art, cfg["gemini"]["summary_length"])
-            except Exception as e:
-                print(f"   [WARN] 要約失敗: {e}")
-                art["summary"] = "（要約に失敗しました）"
-            time.sleep(4)   # 無料枠: 15req/min → 4秒待機
+    # 3. 要約は省略（トークン節約 + タイトルだけで十分）
+    print("\n[4/4] スキップ（タイトルのみで表示）")
 
     # 4. Slack 投稿
     print("\n[Slack] 投稿中...")

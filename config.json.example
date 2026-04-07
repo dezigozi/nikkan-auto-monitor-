@@ -1,0 +1,32 @@
+{
+  "source": {
+    "url": "https://www.netdenjd.com/",
+    "login_url": "https://www.netdenjd.com/login",
+    "username": "",
+    "password": ""
+  },
+  "keywords": [
+    "リビルト",
+    "オートリース",
+    "パナソニック",
+    "カーナビ",
+    "採用"
+  ],
+  "slack": {
+    "webhook_url": "",
+    "channel": "#auto-news",
+    "message_format": "title_and_summary"
+  },
+  "schedule": {
+    "time": "07:00",
+    "days": ["月", "火", "水", "木", "金"]
+  },
+  "gemini": {
+    "model": "gemini-1.5-flash",
+    "summary_length": 150
+  },
+  "output": {
+    "data_dir": "data",
+    "articles_file": "data/articles.json"
+  }
+}

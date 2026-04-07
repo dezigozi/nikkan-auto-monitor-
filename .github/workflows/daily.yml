@@ -24,6 +24,9 @@ jobs:
           pip install -r requirements.txt
           python -m playwright install chromium --with-deps
 
+      - name: config.json を生成（テンプレートから）
+        run: cp config.json.example config.json
+
       - name: スクレイピング・要約・Slack投稿
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

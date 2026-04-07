@@ -309,14 +309,14 @@ async def main():
     else:
         client = genai.Client(api_key=api_key)
         model_name = cfg["gemini"]["model"]
-        for i, art in enumerate(matched[:20], 1):   # 上限20件（無料枠対策）
-            print(f"   {i}/{min(len(matched),20)}: {art['title'][:40]}...")
+        for i, art in enumerate(matched, 1):
+            print(f"   {i}/{len(matched)}: {art['title'][:40]}...")
             try:
                 art["summary"] = summarize_article(client, model_name, art, cfg["gemini"]["summary_length"])
             except Exception as e:
                 print(f"   [WARN] 要約失敗: {e}")
                 art["summary"] = "（要約に失敗しました）"
-            time.sleep(4)   # 無料枠: 15req/min → 4秒待機
+            time.sleep(0.5)
 
     # 4. Slack 投稿
     print("\n[Slack] 投稿中...")

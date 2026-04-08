@@ -294,6 +294,11 @@ async def main():
 
     if not matched:
         print("本日ヒットした記事はありませんでした。")
+        # ヒットなしでも Slack に通知（無音防止）
+        webhook = cfg["slack"]["webhook_url"]
+        if webhook:
+            payload = {"text": f"📰 日刊自動車新聞 {date_str}\n本日はキーワードにヒットした記事はありませんでした（スキャン: {len(all_articles)}件）"}
+            requests.post(webhook, json=payload, timeout=10)
         save_articles(cfg, [], date_str, len(all_articles))
         return
 

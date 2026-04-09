@@ -1,5 +1,48 @@
 [
   {
+    "date": "2026年4月9日",
+    "fetched_at": "01:26",
+    "scanned": 46,
+    "articles": [
+      {
+        "id": "2026年4月9日-1",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックス、モータースポーツ「ARTA」のエンジンオイル発売",
+        "url": "https://www.netdenjd.com/archives/657049"
+      },
+      {
+        "id": "2026年4月9日-2",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックスセブン、整備事業者やディーラー向けタイヤ保管サービス「タイヤループ」を開始",
+        "url": "https://www.netdenjd.com/archives/655932"
+      },
+      {
+        "id": "2026年4月9日-3",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "タウが廃校の備品をリサイクル　資源循環への貢献狙い",
+        "url": "https://www.netdenjd.com/archives/656994"
+      },
+      {
+        "id": "2026年4月9日-4",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "2025年度の北海道新車販売台数、軽好調で0.5％増の2年ぶりプラス　3月は3カ月連続減少",
+        "url": "https://www.netdenjd.com/archives/656732"
+      }
+    ]
+  },
+  {
     "date": "2026年4月8日",
     "fetched_at": "22:34",
     "scanned": 46,

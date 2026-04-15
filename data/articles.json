@@ -1,5 +1,39 @@
 [
   {
+    "date": "2026年4月15日",
+    "fetched_at": "22:37",
+    "scanned": 46,
+    "articles": [
+      {
+        "id": "2026年4月15日-1",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックス、モータースポーツ「ARTA」のエンジンオイル発売",
+        "url": "https://www.netdenjd.com/archives/657049"
+      },
+      {
+        "id": "2026年4月15日-2",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックスセブン、整備事業者やディーラー向けタイヤ保管サービス「タイヤループ」を開始",
+        "url": "https://www.netdenjd.com/archives/655932"
+      },
+      {
+        "id": "2026年4月15日-3",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "タウが廃校の備品をリサイクル　資源循環への貢献狙い",
+        "url": "https://www.netdenjd.com/archives/656994"
+      }
+    ]
+  },
+  {
     "date": "2026年4月14日",
     "fetched_at": "22:40",
     "scanned": 55,

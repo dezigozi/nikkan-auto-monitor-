@@ -11,39 +11,25 @@ echo.
 net session >nul 2>&1
 if %errorlevel% neq 0 (
     echo [ERROR] このスクリプトは管理者権限で実行してください
-    echo         右クリック → 「管理者として実行」
+    echo         右クリック ^→ 「管理者として実行」
     pause
     exit /b 1
 )
 
-:: Python パス取得
-for /f "delims=" %%A in ('where python') do set PYTHON_PATH=%%A
-if "%PYTHON_PATH%"=="" (
-    echo [ERROR] Python が見つかりません
-    pause
-    exit /b 1
-)
-
-echo Pythonパス: %PYTHON_PATH%
-echo 作業ディレクトリ: %CD%
+echo [セットアップ] タスクスケジューラに登録中...
 echo.
 
-:: 既存タスク削除（エラーは無視）
-echo [セットアップ] 既存タスクを削除中...
-schtasks /delete /tn "nikkan-server" /f >nul 2>&1
-
-:: 新規タスク作成
-echo [セットアップ] タスクを作成中...
-schtasks /create /tn "nikkan-server" /tr "%PYTHON_PATH% server.py" /sc onstart /ru SYSTEM /f >nul 2>&1
+:: VBScript をタスクに登録（PC起動時に非表示で実行）
+schtasks /create /tn "nikkan-server" /tr "wscript.exe \"%~dp0run-server-hidden.vbs\"" /sc onstart /ru SYSTEM /f
 
 if %errorlevel% equ 0 (
     echo.
     echo ✅ セットアップ完了！
     echo.
-    echo 次回PC起動時に server.py が自動で起動します。
+    echo 次回 PC 起動時に server.py がバックグラウンドで自動起動します。
     echo.
-    echo 今すぐ起動したい場合:
-    echo   python server.py
+    echo 確認コマンド:
+    echo   schtasks /query /tn nikkan-server
     echo.
 ) else (
     echo.

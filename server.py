@@ -40,13 +40,21 @@ def save_config():
             "output": {"data_dir": "data", "articles_file": "data/articles.json"},
         }
 
-        # config.json を保存
+        # ローカルの config.json を保存（パスワード含む）
         with open(CONFIG_FILE, "w", encoding="utf-8") as f:
             json.dump(config, f, ensure_ascii=False, indent=2)
 
-        # Git commit & push
+        # config.json.example も保存（ローカル用、パスワード削除）
+        config_example = config.copy()
+        config_example["source"]["username"] = ""
+        config_example["source"]["password"] = ""
+        example_file = BASE_DIR / "config.json.example"
+        with open(example_file, "w", encoding="utf-8") as f:
+            json.dump(config_example, f, ensure_ascii=False, indent=2)
+
+        # Git commit & push（config.json.example のみ）
         subprocess.run(
-            ["git", "add", "config.json"],
+            ["git", "add", "config.json.example"],
             cwd=BASE_DIR, check=True
         )
         subprocess.run(

@@ -289,9 +289,10 @@
       <p class="text-xs text-slate-400 mb-4">netdenjd.com へのログイン情報（config.json に保存）</p>
       <div class="space-y-3">
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">サイトURL</label>
-          <input type="text" value="https://www.netdenjd.com/"
-            class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-500 focus:outline-none" readonly>
+          <label class="block text-xs font-medium text-slate-600 mb-1">スクレイピング対象URL</label>
+          <input type="text" x-model="settings.source.url" placeholder="https://www.netdenjd.com/show-paper?date="
+            class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400 font-mono">
+          <p class="text-xs text-slate-400 mt-1">日付は自動的に付加されます（例：...?date=2026-04-16）</p>
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">ログインID</label>
@@ -556,6 +557,10 @@ function app() {
       } catch (e) {
         if (kwFromRepo) this.settings.keywords = kwFromRepo;
       }
+      // デフォルト値設定
+      if (!this.settings.source.url) {
+        this.settings.source.url = 'https://www.netdenjd.com/show-paper?date=';
+      }
     },
 
     selectDate(date) {
@@ -600,7 +605,7 @@ function app() {
       // ブラウザからは config.json を直接書き込めないため、ダウンロードして置き換えてもらう
       const cfg = {
         source: {
-          url: 'https://www.netdenjd.com/',
+          url: this.settings.source.url || 'https://www.netdenjd.com/show-paper?date=',
           login_url: 'https://www.netdenjd.com/login',
           username: this.settings.source.username,
           password: this.settings.source.password,
@@ -620,7 +625,7 @@ function app() {
       a.href = URL.createObjectURL(blob);
       a.download = 'config.json';
       a.click();
-      alert('config.json をダウンロードしました。\n日刊レポートフォルダの config.json と置き換えてください。');
+      alert('config.json をダウンロードしました。\n日刊レポートフォルダの config.json と置き換えて、git push してください。');
     },
 
     exportMarkdown() {

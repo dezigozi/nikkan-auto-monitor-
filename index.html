@@ -601,31 +601,36 @@ function app() {
       }
     },
 
-    saveSettings() {
-      // ブラウザからは config.json を直接書き込めないため、ダウンロードして置き換えてもらう
-      const cfg = {
-        source: {
-          url: this.settings.source.url || 'https://www.netdenjd.com/show-paper?date=',
-          login_url: 'https://www.netdenjd.com/login',
-          username: this.settings.source.username,
-          password: this.settings.source.password,
-        },
-        keywords: this.settings.keywords,
-        slack: {
-          webhook_url: this.settings.slack.webhook_url,
-          channel: this.settings.slack.channel,
-          message_format: 'title_and_summary',
-        },
-        schedule: { time: '07:00', days: ['月','火','水','木','金'] },
-        gemini: { model: 'gemini-1.5-flash', summary_length: 150 },
-        output: { data_dir: 'data', articles_file: 'data/articles.json' },
-      };
-      const blob = new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'config.json';
-      a.click();
-      alert('config.json をダウンロードしました。\n日刊レポートフォルダの config.json と置き換えて、git push してください。');
+    async saveSettings() {
+      try {
+        const response = await fetch('http://localhost:3000/api/save-config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source: {
+              url: this.settings.source.url || 'https://www.netdenjd.com/show-paper?date=',
+              username: this.settings.source.username,
+              password: this.settings.source.password,
+            },
+            keywords: this.settings.keywords,
+            slack: {
+              webhook_url: this.settings.slack.webhook_url,
+              channel: this.settings.slack.channel,
+            },
+          }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          alert('✅ ' + result.message);
+          // config.json が更新されたので再読み込み
+          await this.loadConfig();
+        } else {
+          alert('❌ ' + result.message);
+        }
+      } catch (e) {
+        alert(`❌ サーバーに接続できません。\n\nserver.py が起動しているか確認してください:\n  python server.py\n\nエラー: ${e.message}`);
+      }
     },
 
     exportMarkdown() {

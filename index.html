@@ -41,11 +41,14 @@
       </nav>
       <div class="text-right border-l border-stone-600 pl-5">
         <div class="flex items-center gap-1.5 justify-end">
-          <span class="w-2 h-2 rounded-full pulse" :class="loading ? 'bg-yellow-400' : 'bg-green-400'"></span>
-          <span class="text-xs" :class="loading ? 'text-yellow-400' : 'text-green-400'"
-            x-text="loading ? '取得中...' : '自動取得 ON'"></span>
+          <span class="w-2 h-2 rounded-full pulse"
+            :class="running ? 'bg-orange-400' : loading ? 'bg-yellow-400' : 'bg-green-400'"></span>
+          <span class="text-xs"
+            :class="running ? 'text-orange-400' : loading ? 'text-yellow-400' : 'text-green-400'"
+            x-text="running ? 'Actions実行中' : loading ? '読込中...' : '自動取得 ON'"></span>
         </div>
-        <p class="text-stone-300 text-xs mt-0.5" x-text="todayLabel + ' 最終更新 ' + fetchedAt"></p>
+        <p class="text-stone-300 text-xs mt-0.5"
+          x-text="running ? runningMsg : (todayLabel + ' 最終更新 ' + fetchedAt)"></p>
       </div>
     </div>
   </div>
@@ -60,14 +63,16 @@
     <!-- 実行 -->
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">実行</h2>
-      <button @click="reload()"
-        class="w-full bg-red-700 hover:bg-red-800 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
-        <svg class="w-4 h-4" :class="loading && 'animate-spin'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button @click="reload()" :disabled="running || loading"
+        class="w-full text-white text-sm font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+        :class="running ? 'bg-orange-500 cursor-not-allowed' : 'bg-red-700 hover:bg-red-800'">
+        <svg class="w-4 h-4" :class="(loading || running) && 'animate-spin'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
         </svg>
-        <span x-text="loading ? '読み込み中...' : '最新データを取得'"></span>
+        <span x-text="running ? '実行中...' : loading ? '読み込み中...' : '最新データを取得'"></span>
       </button>
-      <p class="text-slate-400 text-xs mt-2 text-center">次回自動実行：毎朝 07:00</p>
+      <p class="text-slate-400 text-xs mt-2 text-center"
+        x-text="githubToken ? 'ボタンでスクレイパーを今すぐ実行' : 'PATを設定するとここから実行可'"></p>
     </div>
 
     <!-- 統計 -->
@@ -332,6 +337,31 @@
       </div>
     </div>
 
+    <!-- GitHub PAT -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+      <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2">
+        <svg class="w-5 h-5 text-slate-700" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/>
+        </svg>GitHub PAT（手動実行用）
+      </h3>
+      <p class="text-xs text-slate-400 mb-1">「最新データを取得」ボタンで GitHub Actions を直接トリガーするために使います。</p>
+      <p class="text-xs text-amber-700 bg-amber-50 rounded-lg px-2 py-1.5 mb-4">
+        PAT は <strong>このブラウザのローカルにのみ保存</strong>されます。GitHub には送信しません。<br>
+        必要な権限: <code>repo</code>（または <code>actions:write</code>）
+      </p>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Personal Access Token</label>
+          <input type="password" x-model="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+            class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400 font-mono">
+        </div>
+        <div class="flex justify-end">
+          <button @click="saveGithubToken()"
+            class="bg-slate-800 hover:bg-slate-900 text-white text-sm px-5 py-2 rounded-lg transition-colors font-medium">保存する</button>
+        </div>
+      </div>
+    </div>
+
     <!-- スケジュール -->
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
       <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2">
@@ -363,16 +393,23 @@
 
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
+const REPO = 'dezigozi/nikkan-auto-monitor-';
+const WORKFLOW_FILE = 'daily.yml';
+
 function app() {
   return {
     tab: 'report',
     loading: false,
+    running: false,       // GitHub Actions 実行中フラグ
+    runningMsg: '',       // 実行中メッセージ
+    pollTimer: null,      // ポーリングタイマー
     newKeyword: '',
     filterKw: '',
     selectedDate: '',
     fetchedAt: '',
     todayScanned: 0,
-    history: [],       // articles.json の全データ
+    history: [],
+    githubToken: '',      // GitHub PAT（localStorage保存）
     settings: {
       keywords: [],
       source: { username: '', password: '' },
@@ -380,12 +417,13 @@ function app() {
     },
 
     async init() {
+      this.githubToken = localStorage.getItem('github_pat') || '';
       await this.loadConfig();
-      await this.reload();
+      await this.fetchData();
     },
 
-    // articles.json を読み込む
-    async reload() {
+    // articles.json を読み込む（表示更新のみ）
+    async fetchData() {
       this.loading = true;
       try {
         const res = await fetch('data/articles.json?t=' + Date.now());
@@ -398,10 +436,100 @@ function app() {
             this.todayScanned = latest.scanned || 0;
           }
         }
-      } catch(e) {
-        // ファイルなし = 初回起動
-      }
+      } catch(e) {}
       this.loading = false;
+    },
+
+    // ボタン押下：GitHub Actions をトリガーして完了までポーリング
+    async reload() {
+      if (this.running) return;
+
+      if (!this.githubToken) {
+        // トークン未設定 → 表示更新のみ
+        await this.fetchData();
+        alert('GitHub PAT が未設定のため、表示の再読み込みのみ行いました。\n設定タブから GitHub PAT を登録すると、スクレイパーをここから実行できます。');
+        return;
+      }
+
+      // GitHub Actions workflow_dispatch をトリガー
+      this.running = true;
+      this.runningMsg = 'GitHub Actions を起動中...';
+      try {
+        const res = await fetch(
+          `https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW_FILE}/dispatches`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${this.githubToken}`,
+              'Accept': 'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ref: 'main' }),
+          }
+        );
+        if (res.status === 204) {
+          this.runningMsg = 'スクレイパー実行中... 完了まで数分かかります';
+          this.startPolling();
+        } else if (res.status === 401) {
+          alert('GitHub PAT の認証に失敗しました。設定タブで PAT を確認してください。');
+          this.running = false;
+        } else {
+          alert(`GitHub API エラー: ${res.status}`);
+          this.running = false;
+        }
+      } catch(e) {
+        alert('GitHub API への接続に失敗しました。');
+        this.running = false;
+      }
+    },
+
+    // 今日のデータが来るまで 30 秒ごとにポーリング
+    startPolling() {
+      const todayJa = (() => {
+        const now = new Date();
+        return `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+      })();
+
+      let elapsed = 0;
+      this.pollTimer = setInterval(async () => {
+        elapsed += 30;
+        this.runningMsg = `スクレイパー実行中... (${elapsed}秒経過)`;
+        try {
+          const res = await fetch('data/articles.json?t=' + Date.now());
+          if (res.ok) {
+            const data = await res.json();
+            if (data.length > 0 && data[0].date === todayJa) {
+              // 今日のデータが来た！
+              this.history = data;
+              this.selectedDate = data[0].date;
+              this.fetchedAt = data[0].fetched_at || '';
+              this.todayScanned = data[0].scanned || 0;
+              this.stopPolling();
+              return;
+            }
+          }
+        } catch(e) {}
+        // 20分（40回）でタイムアウト
+        if (elapsed >= 1200) {
+          this.stopPolling();
+          alert('タイムアウト: GitHub Actions の実行完了を確認できませんでした。\nGitHub の Actions タブで状況を確認してください。');
+        }
+      }, 30000);
+    },
+
+    stopPolling() {
+      if (this.pollTimer) {
+        clearInterval(this.pollTimer);
+        this.pollTimer = null;
+      }
+      this.running = false;
+      this.runningMsg = '';
+    },
+
+    saveGithubToken() {
+      localStorage.setItem('github_pat', this.githubToken);
+      alert('GitHub PAT を保存しました。');
     },
 
     // keywords.json（GitHub と同期）を優先し、config.json でログイン・Slack を読み込む

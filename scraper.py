@@ -84,10 +84,7 @@ async def scrape_articles(cfg: dict) -> list[dict]:
 
         # --- 記事一覧ページへ ---
         print("[2/4] 記事一覧を取得中...")
-        today_date = datetime.now().strftime("%Y-%m-%d")
-        articles_url = cfg["source"]["url"] + today_date
-        print(f"   URL: {articles_url}")
-        await page.goto(articles_url, wait_until="domcontentloaded", timeout=30000)
+        await page.goto(cfg["source"]["url"], wait_until="domcontentloaded", timeout=30000)
 
         # 記事リンクを収集（セレクタはサイト構造に合わせて要調整）
         links = await page.eval_on_selector_all(

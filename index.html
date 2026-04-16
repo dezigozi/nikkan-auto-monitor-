@@ -221,8 +221,8 @@
           </div>
           <h3 class="font-bold text-slate-900 text-base leading-snug mb-3" x-text="article.title"></h3>
           <div class="flex items-center gap-4">
-            <a :href="article.url" target="_blank" rel="noopener"
-              class="text-red-600 text-xs hover:underline font-medium flex items-center gap-1">
+            <a @click="openArticle(article.url)"
+              class="text-red-600 text-xs hover:underline font-medium flex items-center gap-1 cursor-pointer">
               元記事を読む
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -531,6 +531,12 @@ function app() {
     saveGithubToken() {
       localStorage.setItem('github_pat', this.githubToken);
       alert('GitHub PAT を保存しました。');
+    },
+
+    openArticle(articleUrl) {
+      // server.py のログインエンドポイント経由で開く
+      const loginUrl = `http://localhost:3000/login?redirect=${encodeURIComponent(articleUrl)}`;
+      window.open(loginUrl, '_blank');
     },
 
     // keywords.json（GitHub と同期）を優先し、config.json でログイン・Slack を読み込む

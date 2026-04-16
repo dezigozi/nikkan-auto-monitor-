@@ -7,11 +7,14 @@ import json
 import subprocess
 import sys
 from pathlib import Path
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, session
 from flask_cors import CORS
+import asyncio
+from playwright.async_api import async_playwright
 
 app = Flask(__name__)
 CORS(app)
+app.secret_key = "nikkan-monitor-secret"
 
 BASE_DIR = Path(__file__).parent
 CONFIG_FILE = BASE_DIR / "config.json"
@@ -72,6 +75,72 @@ def save_config():
         return jsonify({"success": False, "message": f"Git操作に失敗しました: {e}"}), 400
     except Exception as e:
         return jsonify({"success": False, "message": f"エラー: {e}"}), 400
+
+
+@app.route('/login', methods=['GET'])
+def login_and_redirect():
+    """ログインして記事へリダイレクト"""
+    redirect_url = request.args.get('redirect')
+    if not redirect_url:
+        return "リダイレクトURLが指定されていません", 400
+
+    try:
+        # config.json からログイン情報を読む
+        with open(CONFIG_FILE, encoding="utf-8") as f:
+            cfg = json.load(f)
+
+        username = cfg.get("source", {}).get("username", "")
+        password = cfg.get("source", {}).get("password", "")
+        login_url = cfg.get("source", {}).get("login_url", "https://www.netdenjd.com/login")
+
+        if not username or not password:
+            return jsonify({"error": "ログイン情報が設定されていません"}), 400
+
+        # 非同期でログイン実行
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            cookie_header = loop.run_until_complete(get_login_cookies(login_url, username, password))
+            # リダイレクト時にクッキーを設定
+            response = redirect(redirect_url)
+            if cookie_header:
+                response.set_cookie('auth', cookie_header)
+            return response
+        finally:
+            loop.close()
+
+    except Exception as e:
+        return jsonify({"error": f"ログイン失敗: {str(e)}"}), 400
+
+
+async def get_login_cookies(login_url, username, password):
+    """Playwrightを使ってログインし、クッキーを取得"""
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        ctx = await browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/124.0.0.0 Safari/537.36"
+            )
+        )
+        page = await ctx.new_page()
+
+        try:
+            await page.goto(login_url, wait_until="domcontentloaded", timeout=30000)
+
+            # ログインフォームへの入力
+            await page.fill('input[name="email"], input[type="email"], input[name="username"]', username)
+            await page.fill('input[name="password"], input[type="password"]', password)
+            await page.click('button[type="submit"], input[type="submit"]')
+            await page.wait_for_load_state("networkidle", timeout=30000)
+
+            # クッキーを取得
+            cookies = await ctx.cookies()
+            cookie_str = "; ".join([f"{c['name']}={c['value']}" for c in cookies])
+            return cookie_str
+        finally:
+            await browser.close()
 
 
 @app.route('/health', methods=['GET'])

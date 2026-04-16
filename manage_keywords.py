@@ -5,13 +5,17 @@
   python manage_keywords.py add <キーワード>   -- 追加
   python manage_keywords.py remove <キーワード> -- 削除
   python manage_keywords.py edit <旧> <新>    -- 変更
+
+変更操作は自動で GitHub にプッシュします。
 """
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
 KW_FILE = Path(__file__).parent / "keywords.json"
+REPO_DIR = Path(__file__).parent
 
 
 def load():
@@ -22,6 +26,28 @@ def load():
 def save(kws):
     with open(KW_FILE, "w", encoding="utf-8") as f:
         json.dump(kws, f, ensure_ascii=False, indent=2)
+
+
+def git_push(message):
+    """keywords.json をコミットして GitHub にプッシュする"""
+    print("\n[GitHub] プッシュ中...")
+    try:
+        subprocess.run(
+            ["git", "add", "keywords.json"],
+            cwd=REPO_DIR, check=True
+        )
+        subprocess.run(
+            ["git", "commit", "-m", message],
+            cwd=REPO_DIR, check=True
+        )
+        subprocess.run(
+            ["git", "push", "origin", "main"],
+            cwd=REPO_DIR, check=True
+        )
+        print("[GitHub] プッシュ完了 → GitHub Actions にも反映されます")
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] GitHubへのプッシュに失敗しました: {e}")
+        print("  手動で git push origin main を実行してください")
 
 
 def cmd_list():
@@ -40,6 +66,7 @@ def cmd_add(word):
     kws.append(word)
     save(kws)
     print(f"[OK] 「{word}」を追加しました（現在 {len(kws)}件）")
+    git_push(f"キーワード追加: {word}")
 
 
 def cmd_remove(word):
@@ -51,6 +78,7 @@ def cmd_remove(word):
     kws.remove(word)
     save(kws)
     print(f"[OK] 「{word}」を削除しました（現在 {len(kws)}件）")
+    git_push(f"キーワード削除: {word}")
 
 
 def cmd_edit(old_word, new_word):
@@ -66,6 +94,7 @@ def cmd_edit(old_word, new_word):
     kws[idx] = new_word
     save(kws)
     print(f"[OK] 「{old_word}」→「{new_word}」に変更しました")
+    git_push(f"キーワード変更: {old_word} → {new_word}")
 
 
 def main():

@@ -1,9 +1,64 @@
 [
   {
     "date": "2026年4月16日",
-    "fetched_at": "01:14",
-    "scanned": 1,
-    "articles": []
+    "fetched_at": "01:34",
+    "scanned": 46,
+    "articles": [
+      {
+        "id": "2026年4月16日-1",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、サプライチェーン基幹システム刷新　オラクルと戦略的パートナーシップ",
+        "url": "https://www.netdenjd.com/archives/658702"
+      },
+      {
+        "id": "2026年4月16日-2",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックス、モータースポーツ「ARTA」のエンジンオイル発売",
+        "url": "https://www.netdenjd.com/archives/657049"
+      },
+      {
+        "id": "2026年4月16日-3",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックスセブン、整備事業者やディーラー向けタイヤ保管サービス「タイヤループ」を開始",
+        "url": "https://www.netdenjd.com/archives/655932"
+      },
+      {
+        "id": "2026年4月16日-4",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、大阪大とネーミングライツ契約　2029年3月末まで",
+        "url": "https://www.netdenjd.com/archives/657275"
+      },
+      {
+        "id": "2026年4月16日-5",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、東大と長期包括連携　走行中無線給電など社会実装へ",
+        "url": "https://www.netdenjd.com/archives/653843"
+      },
+      {
+        "id": "2026年4月16日-6",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "タウが廃校の備品をリサイクル　資源循環への貢献狙い",
+        "url": "https://www.netdenjd.com/archives/656994"
+      }
+    ]
   },
   {
     "date": "2026年4月15日",

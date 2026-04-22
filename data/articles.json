@@ -1,5 +1,66 @@
 [
   {
+    "date": "2026年4月22日",
+    "fetched_at": "22:42",
+    "scanned": 47,
+    "articles": [
+      {
+        "id": "2026年4月22日-1",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックスグループのバックスeモビリティ、BYD販売店を京都にオープン　全国で5店舗目",
+        "url": "https://www.netdenjd.com/archives/659202"
+      },
+      {
+        "id": "2026年4月22日-2",
+        "tags": [
+          "バッテリー"
+        ],
+        "time": "",
+        "title": "PAS、自動車用バッテリー「caos」のブランドコンセプトを刷新　20周年機に",
+        "url": "https://www.netdenjd.com/archives/659030"
+      },
+      {
+        "id": "2026年4月22日-3",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、大阪大とネーミングライツ契約　2029年3月末まで",
+        "url": "https://www.netdenjd.com/archives/657275"
+      },
+      {
+        "id": "2026年4月22日-4",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、東大と長期包括連携　走行中無線給電など社会実装へ",
+        "url": "https://www.netdenjd.com/archives/653843"
+      },
+      {
+        "id": "2026年4月22日-5",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "政府、循環経済行動計画を決定　鉄・アルミ・銅・磁石にリサイクル目標　2030年までに官民投資1兆円",
+        "url": "https://www.netdenjd.com/archives/660343"
+      },
+      {
+        "id": "2026年4月22日-6",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "中国地区の2025年度新車販売、4年ぶりに減少",
+        "url": "https://www.netdenjd.com/archives/660353"
+      }
+    ]
+  },
+  {
     "date": "2026年4月21日",
     "fetched_at": "22:37",
     "scanned": 52,

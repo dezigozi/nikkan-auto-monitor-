@@ -8,10 +8,8 @@
 
 import json
 import os
-import re
 import sys
 import asyncio
-import time
 from datetime import datetime
 from pathlib import Path
 
@@ -41,6 +39,8 @@ def load_config():
         cfg["source"]["password"] = os.environ["NETDENJD_PASSWORD"]
     if os.environ.get("SLACK_WEBHOOK_URL"):
         cfg["slack"]["webhook_url"] = os.environ["SLACK_WEBHOOK_URL"]
+    if os.environ.get("GEMINI_API_KEY"):
+        cfg.setdefault("gemini", {})["api_key"] = os.environ["GEMINI_API_KEY"]
     # keywords.json があればキーワードを上書き（GitHub上で管理）
     kw_file = BASE_DIR / "keywords.json"
     if kw_file.exists():
@@ -160,16 +160,14 @@ def filter_by_keywords(articles: list[dict], keywords: list[str]) -> list[dict]:
 # =====================
 #  Gemini で要約
 # =====================
-def summarize_article(client, model_name: str, article: dict, length: int) -> str:
-    prompt = f"""以下の自動車業界ニュース記事を、{length}字程度で日本語要約してください。
-重要なポイント（数字・企業名・新技術・市場動向）を含めて簡潔にまとめてください。
-
-【タイトル】{article['title']}
-
-【本文】
-{article.get('body', '')[:500]}
-
-要約（{length}字程度）:"""
+def summarize_article(client: genai.Client, model_name: str, article: dict, length: int) -> str:
+    prompt = (
+        f"以下の自動車業界ニュース記事を、{length}字程度で日本語要約してください。\n"
+        "重要なポイント（数字・企業名・新技術・市場動向）を含めて簡潔にまとめてください。\n\n"
+        f"【タイトル】{article['title']}\n\n"
+        f"【本文】\n{article.get('body', '')[:1500]}\n\n"
+        f"要約（{length}字程度）:"
+    )
 
     response = client.models.generate_content(model=model_name, contents=prompt)
     return response.text.strip()
@@ -207,6 +205,7 @@ def post_to_slack(cfg: dict, articles: list[dict], date_str: str):
     # 各記事ブロック
     for art in articles:
         tag_text = "  ".join([f"`{t}`" for t in art.get("tags", [])])
+        summary_text = f"\n>{art['summary']}" if art.get("summary") else ""
         blocks.append({
             "type": "section",
             "text": {
@@ -214,6 +213,7 @@ def post_to_slack(cfg: dict, articles: list[dict], date_str: str):
                 "text": (
                     f"{tag_text}\n"
                     f"*<{art['url']}|{art['title']}>*"
+                    f"{summary_text}"
                 )
             }
         })
@@ -302,8 +302,25 @@ async def main():
         save_articles(cfg, [], date_str, len(all_articles))
         return
 
-    # 3. 要約は省略（トークン節約 + タイトルだけで十分）
-    print("\n[4/4] スキップ（タイトルのみで表示）")
+    # 3. Gemini で要約
+    gemini_cfg = cfg.get("gemini", {})
+    gemini_api_key = gemini_cfg.get("api_key", "")
+    if gemini_api_key:
+        print("\n[3/4] Gemini で記事を要約中...")
+        gemini_client = genai.Client(api_key=gemini_api_key)
+        model_name = gemini_cfg.get("model", "gemini-2.0-flash")
+        summary_length = gemini_cfg.get("summary_length", 150)
+        for i, art in enumerate(matched, 1):
+            try:
+                art["summary"] = summarize_article(gemini_client, model_name, art, summary_length)
+                print(f"   [{i}/{len(matched)}] 要約完了: {art['title'][:40]}...")
+            except Exception as e:
+                print(f"   [WARN] 要約失敗: {e}")
+                art["summary"] = ""
+    else:
+        print("\n[3/4] スキップ（GEMINI_API_KEY が未設定）")
+        for art in matched:
+            art["summary"] = ""
 
     # 4. Slack 投稿
     print("\n[Slack] 投稿中...")

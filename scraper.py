@@ -1,24 +1,22 @@
 """
 日刊自動車新聞 トピックスモニター - バックエンド
   1. netdenjd.com にログインして記事一覧を取得
-  2. キーワードにヒットした記事を Gemini で要約
+  2. キーワードにヒットした記事を Groq で要約
   3. Slack に投稿
   4. data/articles.json に保存（フロントエンドが読む）
 """
 
 import json
 import os
-import re
 import sys
 import asyncio
-import time
 from datetime import datetime
 from pathlib import Path
 
 # --- サードパーティ ---
 try:
     from playwright.async_api import async_playwright
-    from google import genai
+    from groq import Groq
     import requests
 except ImportError as e:
     print(f"[ERROR] 依存パッケージが不足しています: {e}")
@@ -41,6 +39,8 @@ def load_config():
         cfg["source"]["password"] = os.environ["NETDENJD_PASSWORD"]
     if os.environ.get("SLACK_WEBHOOK_URL"):
         cfg["slack"]["webhook_url"] = os.environ["SLACK_WEBHOOK_URL"]
+    if os.environ.get("GROQ_API_KEY"):
+        cfg.setdefault("groq", {})["api_key"] = os.environ["GROQ_API_KEY"]
     # keywords.json があればキーワードを上書き（GitHub上で管理）
     kw_file = BASE_DIR / "keywords.json"
     if kw_file.exists():
@@ -158,21 +158,24 @@ def filter_by_keywords(articles: list[dict], keywords: list[str]) -> list[dict]:
 
 
 # =====================
-#  Gemini で要約
+#  Groq で要約
 # =====================
-def summarize_article(client, model_name: str, article: dict, length: int) -> str:
-    prompt = f"""以下の自動車業界ニュース記事を、{length}字程度で日本語要約してください。
-重要なポイント（数字・企業名・新技術・市場動向）を含めて簡潔にまとめてください。
+def summarize_article(client: Groq, model_name: str, article: dict, length: int) -> str:
+    prompt = (
+        f"以下の自動車業界ニュース記事を、{length}字程度で日本語要約してください。\n"
+        "重要なポイント（数字・企業名・新技術・市場動向）を含めて簡潔にまとめてください。\n\n"
+        f"【タイトル】{article['title']}\n\n"
+        f"【本文】\n{article.get('body', '')[:1500]}\n\n"
+        f"要約（{length}字程度）:"
+    )
 
-【タイトル】{article['title']}
-
-【本文】
-{article.get('body', '')[:500]}
-
-要約（{length}字程度）:"""
-
-    response = client.models.generate_content(model=model_name, contents=prompt)
-    return response.text.strip()
+    response = client.chat.completions.create(
+        model=model_name,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=512,
+        temperature=0.3,
+    )
+    return response.choices[0].message.content.strip()
 
 
 # =====================
@@ -207,6 +210,7 @@ def post_to_slack(cfg: dict, articles: list[dict], date_str: str):
     # 各記事ブロック
     for art in articles:
         tag_text = "  ".join([f"`{t}`" for t in art.get("tags", [])])
+        summary_text = f"\n>{art['summary']}" if art.get("summary") else ""
         blocks.append({
             "type": "section",
             "text": {
@@ -214,6 +218,7 @@ def post_to_slack(cfg: dict, articles: list[dict], date_str: str):
                 "text": (
                     f"{tag_text}\n"
                     f"*<{art['url']}|{art['title']}>*"
+                    f"{summary_text}"
                 )
             }
         })
@@ -302,8 +307,25 @@ async def main():
         save_articles(cfg, [], date_str, len(all_articles))
         return
 
-    # 3. 要約は省略（トークン節約 + タイトルだけで十分）
-    print("\n[4/4] スキップ（タイトルのみで表示）")
+    # 3. Groq で要約
+    groq_cfg = cfg.get("groq", {})
+    groq_api_key = groq_cfg.get("api_key", "")
+    if groq_api_key:
+        print("\n[3/4] Groq で記事を要約中...")
+        groq_client = Groq(api_key=groq_api_key)
+        model_name = groq_cfg.get("model", "llama-3.3-70b-versatile")
+        summary_length = groq_cfg.get("summary_length", 150)
+        for i, art in enumerate(matched, 1):
+            try:
+                art["summary"] = summarize_article(groq_client, model_name, art, summary_length)
+                print(f"   [{i}/{len(matched)}] 要約完了: {art['title'][:40]}...")
+            except Exception as e:
+                print(f"   [WARN] 要約失敗: {e}")
+                art["summary"] = ""
+    else:
+        print("\n[3/4] スキップ（GROQ_API_KEY が未設定）")
+        for art in matched:
+            art["summary"] = ""
 
     # 4. Slack 投稿
     print("\n[Slack] 投稿中...")

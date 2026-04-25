@@ -49,6 +49,10 @@
     "model": "gemini-2.0-flash",
     "summary_length": 150
   },
+  "groq": {
+    "model": "llama-3.3-70b-versatile",
+    "summary_length": 150
+  },
   "output": {
     "data_dir": "data",
     "articles_file": "data/articles.json"

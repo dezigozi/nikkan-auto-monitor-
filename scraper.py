@@ -1,7 +1,7 @@
 """
 日刊自動車新聞 トピックスモニター - バックエンド
   1. netdenjd.com にログインして記事一覧を取得
-  2. キーワードにヒットした記事を Groq で要約
+  2. キーワードにヒットした記事を Gemini で要約
   3. Slack に投稿
   4. data/articles.json に保存（フロントエンドが読む）
 """
@@ -16,7 +16,7 @@ from pathlib import Path
 # --- サードパーティ ---
 try:
     from playwright.async_api import async_playwright
-    from groq import Groq
+    from google import genai
     import requests
 except ImportError as e:
     print(f"[ERROR] 依存パッケージが不足しています: {e}")
@@ -39,8 +39,8 @@ def load_config():
         cfg["source"]["password"] = os.environ["NETDENJD_PASSWORD"]
     if os.environ.get("SLACK_WEBHOOK_URL"):
         cfg["slack"]["webhook_url"] = os.environ["SLACK_WEBHOOK_URL"]
-    if os.environ.get("GROQ_API_KEY"):
-        cfg.setdefault("groq", {})["api_key"] = os.environ["GROQ_API_KEY"]
+    if os.environ.get("GEMINI_API_KEY"):
+        cfg.setdefault("gemini", {})["api_key"] = os.environ["GEMINI_API_KEY"]
     # keywords.json があればキーワードを上書き（GitHub上で管理）
     kw_file = BASE_DIR / "keywords.json"
     if kw_file.exists():
@@ -158,9 +158,9 @@ def filter_by_keywords(articles: list[dict], keywords: list[str]) -> list[dict]:
 
 
 # =====================
-#  Groq で要約
+#  Gemini で要約
 # =====================
-def summarize_article(client: Groq, model_name: str, article: dict, length: int) -> str:
+def summarize_article(client: genai.Client, model_name: str, article: dict, length: int) -> str:
     prompt = (
         f"以下の自動車業界ニュース記事を、{length}字程度で日本語要約してください。\n"
         "重要なポイント（数字・企業名・新技術・市場動向）を含めて簡潔にまとめてください。\n\n"
@@ -169,13 +169,8 @@ def summarize_article(client: Groq, model_name: str, article: dict, length: int)
         f"要約（{length}字程度）:"
     )
 
-    response = client.chat.completions.create(
-        model=model_name,
-        messages=[{"role": "user", "content": prompt}],
-        max_tokens=512,
-        temperature=0.3,
-    )
-    return response.choices[0].message.content.strip()
+    response = client.models.generate_content(model=model_name, contents=prompt)
+    return response.text.strip()
 
 
 # =====================
@@ -307,23 +302,23 @@ async def main():
         save_articles(cfg, [], date_str, len(all_articles))
         return
 
-    # 3. Groq で要約
-    groq_cfg = cfg.get("groq", {})
-    groq_api_key = groq_cfg.get("api_key", "")
-    if groq_api_key:
-        print("\n[3/4] Groq で記事を要約中...")
-        groq_client = Groq(api_key=groq_api_key)
-        model_name = groq_cfg.get("model", "llama-3.3-70b-versatile")
-        summary_length = groq_cfg.get("summary_length", 150)
+    # 3. Gemini で要約
+    gemini_cfg = cfg.get("gemini", {})
+    gemini_api_key = gemini_cfg.get("api_key", "")
+    if gemini_api_key:
+        print("\n[3/4] Gemini で記事を要約中...")
+        gemini_client = genai.Client(api_key=gemini_api_key)
+        model_name = gemini_cfg.get("model", "gemini-2.0-flash")
+        summary_length = gemini_cfg.get("summary_length", 150)
         for i, art in enumerate(matched, 1):
             try:
-                art["summary"] = summarize_article(groq_client, model_name, art, summary_length)
+                art["summary"] = summarize_article(gemini_client, model_name, art, summary_length)
                 print(f"   [{i}/{len(matched)}] 要約完了: {art['title'][:40]}...")
             except Exception as e:
                 print(f"   [WARN] 要約失敗: {e}")
                 art["summary"] = ""
     else:
-        print("\n[3/4] スキップ（GROQ_API_KEY が未設定）")
+        print("\n[3/4] スキップ（GEMINI_API_KEY が未設定）")
         for art in matched:
             art["summary"] = ""
 

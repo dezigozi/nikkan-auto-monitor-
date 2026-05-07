@@ -1,5 +1,57 @@
 [
   {
+    "date": "2026年5月7日",
+    "fetched_at": "22:56",
+    "scanned": 54,
+    "articles": [
+      {
+        "id": "2026年5月7日-1",
+        "tags": [
+          "イエローハット"
+        ],
+        "time": "",
+        "title": "イエローハット、2りんかんから最大345万人分の顧客情報流出の恐れ　不正アクセスの中間報告",
+        "url": "https://www.netdenjd.com/archives/663138"
+      },
+      {
+        "id": "2026年5月7日-2",
+        "tags": [
+          "ウィーカーズ"
+        ],
+        "time": "",
+        "title": "ウィーカーズが採用サイト刷新　求職者との接点強化で人材確保",
+        "url": "https://www.netdenjd.com/archives/663046"
+      },
+      {
+        "id": "2026年5月7日-3",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、大阪大とネーミングライツ契約　2029年3月末まで",
+        "url": "https://www.netdenjd.com/archives/657275"
+      },
+      {
+        "id": "2026年5月7日-4",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、東大と長期包括連携　走行中無線給電など社会実装へ",
+        "url": "https://www.netdenjd.com/archives/653843"
+      },
+      {
+        "id": "2026年5月7日-5",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "政府、循環経済行動計画を決定　鉄・アルミ・銅・磁石にリサイクル目標　2030年までに官民投資1兆円",
+        "url": "https://www.netdenjd.com/archives/660343"
+      }
+    ]
+  },
+  {
     "date": "2026年5月6日",
     "fetched_at": "22:43",
     "scanned": 53,

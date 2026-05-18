@@ -1,5 +1,57 @@
 [
   {
+    "date": "2026年5月18日",
+    "fetched_at": "22:54",
+    "scanned": 55,
+    "articles": [
+      {
+        "id": "2026年5月18日-1",
+        "tags": [
+          "ナルネット"
+        ],
+        "time": "",
+        "title": "ナルネットが2029年3月期までの新中計、営業利益12億円へ　26年3月期は8億円",
+        "url": "https://www.netdenjd.com/archives/665822"
+      },
+      {
+        "id": "2026年5月18日-2",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、大阪大とネーミングライツ契約　2029年3月末まで",
+        "url": "https://www.netdenjd.com/archives/657275"
+      },
+      {
+        "id": "2026年5月18日-3",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、東大と長期包括連携　走行中無線給電など社会実装へ",
+        "url": "https://www.netdenjd.com/archives/653843"
+      },
+      {
+        "id": "2026年5月18日-4",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "近畿の2026年4月の新車販売4カ月ぶりプラス　環境性能割の廃止見据えた登録先送りの影響か",
+        "url": "https://www.netdenjd.com/archives/665567"
+      },
+      {
+        "id": "2026年5月18日-5",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "〈2026年4月の国内新車販売台数とブランド別シェア〉",
+        "url": "https://www.netdenjd.com/archives/664090"
+      }
+    ]
+  },
+  {
     "date": "2026年5月17日",
     "fetched_at": "22:46",
     "scanned": 55,

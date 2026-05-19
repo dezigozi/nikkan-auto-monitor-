@@ -1,5 +1,11 @@
 [
   {
+    "date": "2026年5月19日",
+    "fetched_at": "22:59",
+    "scanned": 7,
+    "articles": []
+  },
+  {
     "date": "2026年5月18日",
     "fetched_at": "22:54",
     "scanned": 55,
@@ -1802,11 +1808,5 @@
         "url": "https://www.netdenjd.com/archives/656732"
       }
     ]
-  },
-  {
-    "date": "2026年4月7日",
-    "fetched_at": "22:33",
-    "scanned": 55,
-    "articles": []
   }
 ]

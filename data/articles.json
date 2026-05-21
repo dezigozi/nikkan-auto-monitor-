@@ -1,5 +1,48 @@
 [
   {
+    "date": "2026年5月21日",
+    "fetched_at": "23:00",
+    "scanned": 50,
+    "articles": [
+      {
+        "id": "2026年5月21日-1",
+        "tags": [
+          "リビルト"
+        ],
+        "time": "",
+        "title": "リビルトのターボテクノサービス、ジャパントラックショーで保証拡充プランを紹介",
+        "url": "https://www.netdenjd.com/archives/666882"
+      },
+      {
+        "id": "2026年5月21日-2",
+        "tags": [
+          "バッテリー"
+        ],
+        "time": "",
+        "title": "阿部商会、鹿沼流通センター第二倉庫を新設　バッテリーやタイヤの需要増に対応",
+        "url": "https://www.netdenjd.com/archives/667334"
+      },
+      {
+        "id": "2026年5月21日-3",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、大阪大とネーミングライツ契約　2029年3月末まで",
+        "url": "https://www.netdenjd.com/archives/657275"
+      },
+      {
+        "id": "2026年5月21日-4",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、東大と長期包括連携　走行中無線給電など社会実装へ",
+        "url": "https://www.netdenjd.com/archives/653843"
+      }
+    ]
+  },
+  {
     "date": "2026年5月20日",
     "fetched_at": "23:08",
     "scanned": 42,
@@ -1765,48 +1808,5 @@
     "fetched_at": "22:27",
     "scanned": 6,
     "articles": []
-  },
-  {
-    "date": "2026年4月9日",
-    "fetched_at": "22:35",
-    "scanned": 52,
-    "articles": [
-      {
-        "id": "2026年4月9日-1",
-        "tags": [
-          "オートバックス"
-        ],
-        "time": "",
-        "title": "オートバックス、モータースポーツ「ARTA」のエンジンオイル発売",
-        "url": "https://www.netdenjd.com/archives/657049"
-      },
-      {
-        "id": "2026年4月9日-2",
-        "tags": [
-          "オートバックス"
-        ],
-        "time": "",
-        "title": "オートバックスセブン、整備事業者やディーラー向けタイヤ保管サービス「タイヤループ」を開始",
-        "url": "https://www.netdenjd.com/archives/655932"
-      },
-      {
-        "id": "2026年4月9日-3",
-        "tags": [
-          "リサイクル"
-        ],
-        "time": "",
-        "title": "タウが廃校の備品をリサイクル　資源循環への貢献狙い",
-        "url": "https://www.netdenjd.com/archives/656994"
-      },
-      {
-        "id": "2026年4月9日-4",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "四国の2025年度新車販売、4年ぶりのマイナスに",
-        "url": "https://www.netdenjd.com/archives/656882"
-      }
-    ]
   }
 ]

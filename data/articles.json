@@ -1,5 +1,48 @@
 [
   {
+    "date": "2026年6月1日",
+    "fetched_at": "23:23",
+    "scanned": 54,
+    "articles": [
+      {
+        "id": "2026年6月1日-1",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "2026年5月の国内新車販売、2.8％増で2カ月連続プラス　大幅増のトヨタはコロナ禍以降で過去最多",
+        "url": "https://www.netdenjd.com/archives/669940"
+      },
+      {
+        "id": "2026年6月1日-2",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックス、中古カー用品「セコハン市場」から「ASM」に　ブランド刷新で巻き返し　海外市場も開拓",
+        "url": "https://www.netdenjd.com/archives/669970"
+      },
+      {
+        "id": "2026年6月1日-3",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、大阪大とネーミングライツ契約　2029年3月末まで",
+        "url": "https://www.netdenjd.com/archives/657275"
+      },
+      {
+        "id": "2026年6月1日-4",
+        "tags": [
+          "デンソー"
+        ],
+        "time": "",
+        "title": "デンソー、東大と長期包括連携　走行中無線給電など社会実装へ",
+        "url": "https://www.netdenjd.com/archives/653843"
+      }
+    ]
+  },
+  {
     "date": "2026年5月31日",
     "fetched_at": "22:54",
     "scanned": 54,
@@ -1800,58 +1843,6 @@
         "time": "",
         "title": "徳島県の業界4団体、新車ディーラー向け合同新人研修会を開催",
         "url": "https://www.netdenjd.com/archives/659511"
-      }
-    ]
-  },
-  {
-    "date": "2026年4月20日",
-    "fetched_at": "22:38",
-    "scanned": 53,
-    "articles": [
-      {
-        "id": "2026年4月20日-1",
-        "tags": [
-          "オートバックス"
-        ],
-        "time": "",
-        "title": "オートバックスグループのバックスeモビリティ、BYD販売店を京都にオープン　全国で5店舗目",
-        "url": "https://www.netdenjd.com/archives/659202"
-      },
-      {
-        "id": "2026年4月20日-2",
-        "tags": [
-          "バッテリー"
-        ],
-        "time": "",
-        "title": "PAS、自動車用バッテリー「caos」のブランドコンセプトを刷新　20周年機に",
-        "url": "https://www.netdenjd.com/archives/659030"
-      },
-      {
-        "id": "2026年4月20日-3",
-        "tags": [
-          "デンソー"
-        ],
-        "time": "",
-        "title": "デンソー、大阪大とネーミングライツ契約　2029年3月末まで",
-        "url": "https://www.netdenjd.com/archives/657275"
-      },
-      {
-        "id": "2026年4月20日-4",
-        "tags": [
-          "デンソー"
-        ],
-        "time": "",
-        "title": "デンソー、東大と長期包括連携　走行中無線給電など社会実装へ",
-        "url": "https://www.netdenjd.com/archives/653843"
-      },
-      {
-        "id": "2026年4月20日-5",
-        "tags": [
-          "リサイクル"
-        ],
-        "time": "",
-        "title": "タウが廃校の備品をリサイクル　資源循環への貢献狙い",
-        "url": "https://www.netdenjd.com/archives/656994"
       }
     ]
   }

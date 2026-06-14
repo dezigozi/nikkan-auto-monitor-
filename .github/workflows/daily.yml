@@ -15,10 +15,10 @@ jobs:
 
     steps:
       - name: リポジトリをチェックアウト
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Python セットアップ
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -44,4 +44,13 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/articles.json
           git diff --cached --quiet || git commit -m "📰 $(date +'%Y-%m-%d') 記事更新"
-          git push origin main
+          # リモートが先行していても確実に反映（non-fast-forward 対策・最大3回リトライ）。
+          # until の条件内 push は set -e で落ちないので、失敗→rebase→再試行が安全に回る。
+          n=0
+          until git push origin main; do
+            n=$((n + 1))
+            if [ "$n" -ge 3 ]; then echo "::error::push に3回失敗しました"; exit 1; fi
+            echo "[retry $n] push 拒否 → リベースして再試行..."
+            git pull --rebase --autostash origin main
+            sleep 3
+          done

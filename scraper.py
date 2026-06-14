@@ -209,17 +209,19 @@ def post_to_slack(cfg: dict, articles: list[dict], date_str: str):
     ]
 
     # 各記事ブロック
+    # 元記事は有料ログイン制のため、要約を本文としてそのまま読めるよう前面に出す。
     for art in articles:
         tag_text = "  ".join([f"`{t}`" for t in art.get("tags", [])])
-        summary_text = f"\n>{art['summary']}" if art.get("summary") else ""
+        summary = (art.get("summary") or "").strip()
+        summary_line = summary if summary else "_（要約を取得できませんでした）_"
         blocks.append({
             "type": "section",
             "text": {
                 "type": "mrkdwn",
                 "text": (
                     f"{tag_text}\n"
-                    f"*<{art['url']}|{art['title']}>*"
-                    f"{summary_text}"
+                    f"*<{art['url']}|{art['title']}>* 🔒\n"
+                    f"{summary_line}"
                 )
             }
         })

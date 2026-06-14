@@ -45,8 +45,8 @@
       "金"
     ]
   },
-  "gemini": {
-    "model": "gemini-2.0-flash",
+  "openrouter": {
+    "model": "openai/gpt-oss-120b:free",
     "summary_length": 150
   },
   "output": {

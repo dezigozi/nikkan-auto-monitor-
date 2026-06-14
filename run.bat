@@ -14,8 +14,8 @@ if errorlevel 1 (
     python -m playwright install chromium
 )
 
-:: ---- GEMINI API KEY（未設定の場合はここに入力）----
-:: set GEMINI_API_KEY=AIzaSy_xxxxxxxxxxxxxxxxxxxxxxxxxx
+:: ---- OPENROUTER API KEY（未設定の場合はここに入力）----
+:: set OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxx
 
 :: ---- 実行 ----
 echo.

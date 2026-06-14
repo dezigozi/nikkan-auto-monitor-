@@ -1,7 +1,7 @@
 """
 日刊自動車新聞 トピックスモニター - バックエンド
   1. netdenjd.com にログインして記事一覧を取得
-  2. キーワードにヒットした記事を Gemini で要約
+  2. キーワードにヒットした記事を OpenRouter(無料LLM) で要約
   3. Slack に投稿
   4. data/articles.json に保存（フロントエンドが読む）
 """
@@ -16,7 +16,7 @@ from pathlib import Path
 # --- サードパーティ ---
 try:
     from playwright.async_api import async_playwright
-    from google import genai
+    from openai import OpenAI
     import requests
 except ImportError as e:
     print(f"[ERROR] 依存パッケージが不足しています: {e}")
@@ -39,8 +39,8 @@ def load_config():
         cfg["source"]["password"] = os.environ["NETDENJD_PASSWORD"]
     if os.environ.get("SLACK_WEBHOOK_URL"):
         cfg["slack"]["webhook_url"] = os.environ["SLACK_WEBHOOK_URL"]
-    if os.environ.get("GEMINI_API_KEY"):
-        cfg.setdefault("gemini", {})["api_key"] = os.environ["GEMINI_API_KEY"]
+    if os.environ.get("OPENROUTER_API_KEY"):
+        cfg.setdefault("openrouter", {})["api_key"] = os.environ["OPENROUTER_API_KEY"]
     # keywords.json があればキーワードを上書き（GitHub上で管理）
     kw_file = BASE_DIR / "keywords.json"
     if kw_file.exists():
@@ -158,9 +158,9 @@ def filter_by_keywords(articles: list[dict], keywords: list[str]) -> list[dict]:
 
 
 # =====================
-#  Gemini で要約
+#  OpenRouter(無料LLM) で要約
 # =====================
-def summarize_article(client: genai.Client, model_name: str, article: dict, length: int) -> str:
+def summarize_article(client: OpenAI, model_name: str, article: dict, length: int) -> str:
     prompt = (
         f"以下の自動車業界ニュース記事を、{length}字程度で日本語要約してください。\n"
         "重要なポイント（数字・企業名・新技術・市場動向）を含めて簡潔にまとめてください。\n\n"
@@ -169,8 +169,14 @@ def summarize_article(client: genai.Client, model_name: str, article: dict, leng
         f"要約（{length}字程度）:"
     )
 
-    response = client.models.generate_content(model=model_name, contents=prompt)
-    return response.text.strip()
+    # OpenAI互換 chat.completions（429/5xx/timeout は client の max_retries で自動再試行）
+    response = client.chat.completions.create(
+        model=model_name,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3,
+        max_tokens=length * 4 + 100,
+    )
+    return (response.choices[0].message.content or "").strip()
 
 
 # =====================
@@ -302,23 +308,29 @@ async def main():
         save_articles(cfg, [], date_str, len(all_articles))
         return
 
-    # 3. Gemini で要約
-    gemini_cfg = cfg.get("gemini", {})
-    gemini_api_key = gemini_cfg.get("api_key", "")
-    if gemini_api_key:
-        print("\n[3/4] Gemini で記事を要約中...")
-        gemini_client = genai.Client(api_key=gemini_api_key)
-        model_name = gemini_cfg.get("model", "gemini-2.0-flash")
-        summary_length = gemini_cfg.get("summary_length", 150)
+    # 3. OpenRouter(無料LLM) で要約
+    or_cfg = cfg.get("openrouter", {})
+    or_api_key = or_cfg.get("api_key", "")
+    if or_api_key:
+        print("\n[3/4] OpenRouter(無料LLM) で記事を要約中...")
+        or_client = OpenAI(
+            api_key=or_api_key,
+            base_url=or_cfg.get("base_url", "https://openrouter.ai/api/v1"),
+            timeout=float(or_cfg.get("timeout", 30)),
+            max_retries=int(or_cfg.get("max_retries", 3)),  # 429/5xx/timeout を自動再試行
+            default_headers={"X-Title": "nikkan-auto-monitor"},  # OpenRouter 推奨（任意）
+        )
+        model_name = or_cfg.get("model", "openai/gpt-oss-120b:free")
+        summary_length = or_cfg.get("summary_length", 150)
         for i, art in enumerate(matched, 1):
             try:
-                art["summary"] = summarize_article(gemini_client, model_name, art, summary_length)
+                art["summary"] = summarize_article(or_client, model_name, art, summary_length)
                 print(f"   [{i}/{len(matched)}] 要約完了: {art['title'][:40]}...")
             except Exception as e:
                 print(f"   [WARN] 要約失敗: {e}")
                 art["summary"] = ""
     else:
-        print("\n[3/4] スキップ（GEMINI_API_KEY が未設定）")
+        print("\n[3/4] スキップ（OPENROUTER_API_KEY が未設定）")
         for art in matched:
             art["summary"] = ""
 

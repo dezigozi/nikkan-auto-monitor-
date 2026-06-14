@@ -36,7 +36,7 @@ def save_config():
                 "message_format": "title_and_summary",
             },
             "schedule": {"time": "07:00", "days": ["月","火","水","木","金"]},
-            "gemini": {"model": "gemini-2.0-flash", "summary_length": 150},
+            "openrouter": {"model": "openai/gpt-oss-120b:free", "summary_length": 150},
             "output": {"data_dir": "data", "articles_file": "data/articles.json"},
         }
 

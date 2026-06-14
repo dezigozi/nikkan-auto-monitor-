@@ -219,7 +219,9 @@
             <span class="text-slate-400 text-xs ml-auto flex-shrink-0"
               x-text="article.time ? article.time + '掲載' : ''"></span>
           </div>
-          <h3 class="font-bold text-slate-900 text-base leading-snug mb-3" x-text="article.title"></h3>
+          <h3 class="font-bold text-slate-900 text-base leading-snug mb-2" x-text="article.title"></h3>
+          <p x-show="article.summary" class="text-slate-600 text-sm leading-relaxed mb-3"
+            x-text="article.summary"></p>
           <div class="flex items-center gap-4">
             <a :href="article.url" target="_blank" rel="noopener"
               class="text-red-600 text-xs hover:underline font-medium flex items-center gap-1">

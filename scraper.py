@@ -262,6 +262,7 @@ def save_articles(cfg: dict, articles: list[dict], date_str: str, all_count: int
                 "time": art.get("fetched_time", ""),
                 "title": art["title"],
                 "url": art["url"],
+                "summary": art.get("summary", ""),  # AI要約（Web/MD出力で表示）
             }
             for i, art in enumerate(articles)
         ]

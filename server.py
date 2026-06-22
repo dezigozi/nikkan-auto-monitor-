@@ -24,7 +24,7 @@ def save_config():
         data = request.json
         config = {
             "source": {
-                "url": data.get("source", {}).get("url", "https://www.netdenjd.com/show-paper?date="),
+                "url": data.get("source", {}).get("url", "https://www.netdenjd.com/"),
                 "login_url": "https://www.netdenjd.com/login",
                 "username": data.get("source", {}).get("username", ""),
                 "password": data.get("source", {}).get("password", ""),

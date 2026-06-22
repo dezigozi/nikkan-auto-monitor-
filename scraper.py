@@ -51,10 +51,20 @@ def load_config():
 # =====================
 #  スクレイピング
 # =====================
-async def scrape_articles(cfg: dict) -> list[dict]:
-    """netdenjd.com にログインして本日の記事一覧を取得する"""
-    articles = []
+async def scrape_articles(cfg: dict, keywords: list[str]) -> tuple[list[dict], int]:
+    """netdenjd.com にログインし、記事一覧の【タイトル】でキーワード判定したうえで、
+    ヒットした記事だけ本文を取得して返す。
 
+    処理順が重要:
+      1. 一覧から全記事のタイトル＋URLだけを軽く集める（上限なし）
+      2. 全タイトルでキーワード判定 → ヒットを絞り込む
+      3. ヒットした記事だけ本文を深掘りして要約材料にする
+
+    本文取得は記事ごとにページ遷移する重い処理。先にタイトルで判定することで、
+    一覧の全記事が判定対象になり、件数上限で後ろの記事を取りこぼすことがなくなる。
+
+    戻り値: (ヒット記事のリスト, 一覧でスキャンした総記事数)
+    """
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         ctx = await browser.new_context(
@@ -66,11 +76,9 @@ async def scrape_articles(cfg: dict) -> list[dict]:
         )
         page = await ctx.new_page()
 
-        # --- ログイン ---
+        # --- ログイン（本文は有料ログイン制のため、要約材料の取得に必要）---
         print("[1/4] ログイン中...")
         await page.goto(cfg["source"]["login_url"], wait_until="domcontentloaded", timeout=30000)
-
-        # ログインフォームへの入力（セレクタはサイト構造に合わせて要調整）
         try:
             await page.fill('input[name="email"], input[type="email"], input[name="username"]',
                             cfg["source"]["username"])
@@ -82,37 +90,44 @@ async def scrape_articles(cfg: dict) -> list[dict]:
         except Exception as e:
             print(f"   [WARN] ログイン操作に問題が発生しました: {e}")
 
-        # --- 記事一覧ページへ ---
-        print("[2/4] 記事一覧を取得中...")
+        # --- 記事一覧を取得（タイトル＋URLのみ。本文はまだ取らない）---
+        print("[2/4] 記事一覧のタイトルを取得中...")
         await page.goto(cfg["source"]["url"], wait_until="domcontentloaded", timeout=30000)
 
-        # 記事リンクを収集（セレクタはサイト構造に合わせて要調整）
-        links = await page.eval_on_selector_all(
+        raw = await page.eval_on_selector_all(
             "a[href]",
-            """els => els
-                .map(e => ({ href: e.href, text: e.innerText.trim() }))
-                .filter(x => x.text.length > 20 && x.href.includes('netdenjd.com'))
-            """
+            """els => els.map(e => ({
+                href: e.href,
+                text: (e.innerText || '').trim(),
+                title: (e.getAttribute('title') || '').trim()
+            }))"""
         )
 
-        # 重複除去
+        # 重複除去 ＋ タイトル抽出（CSSで見出しが途中省略される場合に備え title属性も併用）
         seen = set()
         candidates = []
-        for lk in links:
-            if lk["href"] not in seen and lk["text"]:
-                seen.add(lk["href"])
-                candidates.append(lk)
+        for lk in raw:
+            href = lk["href"]
+            if "netdenjd.com" not in href or href in seen:
+                continue
+            title = lk["title"] if len(lk["title"]) > len(lk["text"]) else lk["text"]
+            if len(title) <= 20:   # ナビ・カテゴリ等の短いリンクを除外
+                continue
+            seen.add(href)
+            candidates.append({"title": title[:120], "url": href})
 
-        print(f"   → {len(candidates)} 件のリンクを検出")
+        print(f"   → {len(candidates)} 件の記事を一覧から検出")
 
-        # --- 各記事の本文取得 ---
-        print("[3/4] 記事本文を取得中...")
-        for lk in candidates[:60]:   # 上限60件
+        # --- タイトルでキーワード判定（一覧の全記事が対象）---
+        matched = filter_by_keywords(candidates, keywords)
+        print(f"   → うち {len(matched)} 件がキーワードにヒット")
+
+        # --- ヒットした記事だけ本文を取得（要約材料）---
+        print("[3/4] ヒット記事の本文を取得中...")
+        for art in matched:
             try:
-                await page.goto(lk["href"], wait_until="domcontentloaded", timeout=15000)
-
-                # 本文テキスト取得（article タグ or main タグ or body）
-                body = await page.evaluate("""() => {
+                await page.goto(art["url"], wait_until="domcontentloaded", timeout=15000)
+                art["body"] = await page.evaluate("""() => {
                     const sel = ['article', 'main', '.article-body', '.content', 'body'];
                     for (const s of sel) {
                         const el = document.querySelector(s);
@@ -120,26 +135,19 @@ async def scrape_articles(cfg: dict) -> list[dict]:
                     }
                     return document.body.innerText.trim().slice(0, 3000);
                 }""")
-
-                # 掲載時刻の取得を試みる
-                time_text = await page.evaluate("""() => {
+                art["time_raw"] = await page.evaluate("""() => {
                     const t = document.querySelector('time, .date, .pub-date, [datetime]');
                     return t ? (t.getAttribute('datetime') || t.innerText) : '';
                 }""")
-
-                articles.append({
-                    "title": lk["text"][:120],
-                    "url": lk["href"],
-                    "body": body,
-                    "time_raw": time_text,
-                })
-            except Exception:
-                continue
+            except Exception as e:
+                # 本文取得に失敗してもヒット判定は維持（要約は空でWeb/Slackに出す）
+                print(f"   [WARN] 本文取得に失敗: {art['title'][:30]} : {e}")
+                art["body"] = ""
+                art["time_raw"] = ""
 
         await browser.close()
 
-    print(f"   → {len(articles)} 件の記事を取得")
-    return articles
+    return matched, len(candidates)
 
 
 # =====================
@@ -294,21 +302,18 @@ async def main():
     print(f"監視キーワード: {', '.join(cfg['keywords'])}")
     print("=" * 50)
 
-    # 1. スクレイピング
-    all_articles = await scrape_articles(cfg)
-
-    # 2. キーワードフィルタリング
-    matched = filter_by_keywords(all_articles, cfg["keywords"])
-    print(f"\n[フィルタ結果] {len(matched)}/{len(all_articles)} 件がヒット")
+    # 1+2. スクレイピング（一覧タイトルでキーワード判定 → ヒット記事の本文取得）
+    matched, scanned = await scrape_articles(cfg, cfg["keywords"])
+    print(f"\n[フィルタ結果] {len(matched)}/{scanned} 件がヒット")
 
     if not matched:
         print("本日ヒットした記事はありませんでした。")
         # ヒットなしでも Slack に通知（無音防止）
         webhook = cfg["slack"]["webhook_url"]
         if webhook:
-            payload = {"text": f"📰 日刊自動車新聞 {date_str}\n本日はキーワードにヒットした記事はありませんでした（スキャン: {len(all_articles)}件）"}
+            payload = {"text": f"📰 日刊自動車新聞 {date_str}\n本日はキーワードにヒットした記事はありませんでした（スキャン: {scanned}件）"}
             requests.post(webhook, json=payload, timeout=10)
-        save_articles(cfg, [], date_str, len(all_articles))
+        save_articles(cfg, [], date_str, scanned)
         return
 
     # 3. OpenRouter(無料LLM) で要約
@@ -343,7 +348,7 @@ async def main():
 
     # 5. JSON 保存
     print("\n[保存] articles.json を更新中...")
-    save_articles(cfg, matched, date_str, len(all_articles))
+    save_articles(cfg, matched, date_str, scanned)
 
     print("\n✅ 完了！")
     for art in matched:

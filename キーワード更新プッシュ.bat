@@ -32,16 +32,28 @@ echo Please edit keywords.json first.
 goto end_error
 
 :has_changes
-REM --- Step 1/4: show exactly which file will be committed ---
-echo [1/4] Changed file:
+REM --- Step 1/4: validate keywords.json is valid JSON before anything ---
+echo [1/4] Validating keywords.json...
+python -c "import json,sys; json.load(open('keywords.json',encoding='utf-8')); print('  JSON OK')"
+if errorlevel 1 (
+    echo.
+    echo [ERROR] keywords.json is NOT valid JSON.
+    echo Common cause: a missing comma at the end of a line.
+    echo Fix keywords.json, then run this script again.
+    goto end_error
+)
+echo.
+
+REM --- Step 2/5: show exactly which file will be committed ---
+echo [2/5] Changed file:
 git status --short keywords.json
 echo.
 
 REM Build today's date (yyyy-MM-dd) for the commit message
 for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyy-MM-dd"') do set TODAY=%%i
 
-REM --- Step 2/4: stage ONLY keywords.json, then commit it ---
-echo [2/4] Committing...
+REM --- Step 3/5: stage ONLY keywords.json, then commit it ---
+echo [3/5] Committing...
 git add keywords.json
 > "%TEMP%\nikkan_commitmsg.txt" echo keywords.json updated %TODAY%
 git commit -F "%TEMP%\nikkan_commitmsg.txt"
@@ -52,8 +64,8 @@ if errorlevel 1 (
 )
 
 echo.
-REM --- Step 3/4: sync with remote first (rebase keeps history linear) ---
-echo [3/4] Pull rebase from origin main...
+REM --- Step 4/5: sync with remote first (rebase keeps history linear) ---
+echo [4/5] Pull rebase from origin main...
 git pull --rebase origin main
 if errorlevel 1 (
     echo [ERROR] Pull failed. Uncommitted changes may block rebase.
@@ -63,8 +75,8 @@ if errorlevel 1 (
 )
 
 echo.
-REM --- Step 4/4: push to GitHub ---
-echo [4/4] Push to origin main...
+REM --- Step 5/5: push to GitHub ---
+echo [5/5] Push to origin main...
 git push origin main
 if errorlevel 1 (
     echo [ERROR] Push failed.

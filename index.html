@@ -274,7 +274,12 @@
             <span x-text="kw"></span>
           </span>
         </template>
-        <span x-show="!settings.keywords.length" class="text-sm text-slate-400">読み込み中…</span>
+        <span x-show="!settings.keywords.length && !kwError" class="text-sm text-slate-400">読み込み中…</span>
+      </div>
+      <div x-show="kwError" class="text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5 mb-4 leading-relaxed">
+        <p class="font-bold mb-1">⚠ キーワードを読み込めませんでした</p>
+        <p x-text="kwError"></p>
+        <p class="mt-1">keywords.json を直してから <code class="font-mono">キーワード更新プッシュ.bat</code> で再プッシュしてください。</p>
       </div>
       <div class="text-xs text-amber-800 bg-amber-50 rounded-lg px-3 py-2.5 leading-relaxed">
         <p class="font-bold mb-1">キーワードを追加・削除するには</p>
@@ -408,6 +413,7 @@ function app() {
     runningMsg: '',       // 実行中メッセージ
     pollTimer: null,      // ポーリングタイマー
     newKeyword: '',
+    kwError: '',          // keywords.json 読み込み失敗時のメッセージ
     filterKw: '',
     selectedDate: '',
     fetchedAt: '',
@@ -539,13 +545,18 @@ function app() {
     // keywords.json（GitHub と同期）を優先し、config.json でログイン・Slack を読み込む
     async loadConfig() {
       let kwFromRepo = null;
+      this.kwError = '';
       try {
         const resKw = await fetch('keywords.json?t=' + Date.now());
         if (resKw.ok) {
           const data = await resKw.json();
           if (Array.isArray(data) && data.length) kwFromRepo = data;
+        } else {
+          this.kwError = 'keywords.json を取得できませんでした（HTTP ' + resKw.status + '）。';
         }
-      } catch (e) {}
+      } catch (e) {
+        this.kwError = 'keywords.json の読み込みに失敗しました。JSON の構文エラー（行末のカンマ抜けなど）が原因かもしれません。';
+      }
       try {
         const res = await fetch('config.json?t=' + Date.now());
         if (res.ok) {

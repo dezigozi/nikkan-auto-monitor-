@@ -4,18 +4,24 @@ REM ============================================================
 REM  Keyword Push - nikkan-auto-monitor
 REM ------------------------------------------------------------
 REM  WHAT THIS DOES:
-REM    Commits ONLY keywords.json and pushes it to origin/main.
-REM    GitHub Actions then picks up the new keyword list.
+REM    Commits keywords.json (if edited) AND pushes any commits
+REM    that are not on GitHub yet to origin/main.
 REM
 REM  HOW TO USE:
-REM    1. Edit keywords.json (add/remove keywords) and save.
+REM    1. Edit keywords.json (add/remove keywords) and SAVE it.
 REM    2. Double-click this .bat.
 REM    3. Wait for "Done".
 REM
+REM  WHY IT ALSO PUSHES UNPUSHED COMMITS:
+REM    If you commit keywords.json from VS Code (or a previous
+REM    push failed), the change is committed but NOT on GitHub.
+REM    This script detects that and pushes it, so keywords never
+REM    get stuck on your PC again.
+REM
 REM  NOTES:
 REM    - ASCII-only on purpose (avoids cmd.exe mojibake).
-REM    - Only keywords.json is committed; other changed files
-REM      are left untouched.
+REM    - Only keywords.json is staged; other changed files are
+REM      left untouched.
 REM ============================================================
 cd /d "%~dp0"
 
@@ -24,36 +30,24 @@ echo  Nikkan Auto Monitor - Keyword Push
 echo =========================================
 echo.
 
-REM --- Step 0: abort early if keywords.json has no changes ---
+REM --- Step 1/4: commit keywords.json only if it has new edits ---
 git diff --quiet -- keywords.json
-if errorlevel 1 goto has_changes
-echo [NO CHANGES] keywords.json is not modified.
-echo Please edit keywords.json first.
-goto end_error
+if errorlevel 1 goto do_commit
+echo [1/4] keywords.json has no new edits - checking GitHub...
+goto check_remote
 
-:has_changes
-REM --- Step 1/4: validate keywords.json is valid JSON before anything ---
-echo [1/4] Validating keywords.json...
-python -c "import json,sys; json.load(open('keywords.json',encoding='utf-8')); print('  JSON OK')"
+:do_commit
+echo [1/4] keywords.json changed - validating JSON...
+python -c "import json; json.load(open('keywords.json',encoding='utf-8')); print('  JSON OK')"
 if errorlevel 1 (
     echo.
     echo [ERROR] keywords.json is NOT valid JSON.
-    echo Common cause: a missing comma at the end of a line.
-    echo Fix keywords.json, then run this script again.
+    echo Common cause: a missing comma, or a trailing comma after the
+    echo last keyword. Fix keywords.json, save, then run this again.
     goto end_error
 )
-echo.
-
-REM --- Step 2/5: show exactly which file will be committed ---
-echo [2/5] Changed file:
-git status --short keywords.json
-echo.
-
-REM Build today's date (yyyy-MM-dd) for the commit message
 for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyy-MM-dd"') do set TODAY=%%i
-
-REM --- Step 3/5: stage ONLY keywords.json, then commit it ---
-echo [3/5] Committing...
+echo   Committing keywords.json...
 git add keywords.json
 > "%TEMP%\nikkan_commitmsg.txt" echo keywords.json updated %TODAY%
 git commit -F "%TEMP%\nikkan_commitmsg.txt"
@@ -63,9 +57,18 @@ if errorlevel 1 (
     goto end_error
 )
 
+:check_remote
 echo.
-REM --- Step 4/5: sync with remote first (rebase keeps history linear) ---
-echo [4/5] Pull rebase from origin main...
+REM --- Step 2/4: fetch and count commits not yet on GitHub ---
+echo [2/4] Checking remote for unpushed commits...
+git fetch origin main
+for /f %%c in ('git rev-list --count origin/main..HEAD') do set UNPUSHED=%%c
+if "%UNPUSHED%"=="0" goto nothing
+echo   %UNPUSHED% commit(s) waiting to push.
+
+echo.
+REM --- Step 3/4: sync with remote first (rebase keeps history linear) ---
+echo [3/4] Pull rebase from origin main...
 git pull --rebase origin main
 if errorlevel 1 (
     echo [ERROR] Pull failed. Uncommitted changes may block rebase.
@@ -75,8 +78,8 @@ if errorlevel 1 (
 )
 
 echo.
-REM --- Step 5/5: push to GitHub ---
-echo [5/5] Push to origin main...
+REM --- Step 4/4: push to GitHub ---
+echo [4/4] Push to origin main...
 git push origin main
 if errorlevel 1 (
     echo [ERROR] Push failed.
@@ -85,8 +88,19 @@ if errorlevel 1 (
 
 echo.
 echo =========================================
-echo  Done. GitHub will use the new keywords.
+echo  Done. GitHub now has the latest keywords.
+echo  In the web app, press "reload" or refresh
+echo  the page (F5) to see the new list.
 echo =========================================
+echo.
+pause
+exit /b 0
+
+:nothing
+echo.
+echo [UP TO DATE] Nothing to push.
+echo GitHub already has your latest keywords.
+echo (If you just edited keywords.json, make sure you SAVED the file.)
 echo.
 pause
 exit /b 0

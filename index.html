@@ -454,6 +454,9 @@ function app() {
     async reload() {
       if (this.running) return;
 
+      // キーワード（keywords.json）も毎回読み直す → GitHub 更新がボタンで反映される
+      await this.loadConfig();
+
       if (!this.githubToken) {
         // トークン未設定 → 表示更新のみ
         await this.fetchData();

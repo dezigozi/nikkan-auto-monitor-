@@ -52,16 +52,17 @@ def load_config():
 #  スクレイピング
 # =====================
 async def scrape_articles(cfg: dict, keywords: list[str]) -> tuple[list[dict], int]:
-    """netdenjd.com にログインし、記事一覧の【タイトル】でキーワード判定したうえで、
-    ヒットした記事だけ本文を取得して返す。
+    """記事一覧の【タイトル】でキーワード判定し、ヒットした記事だけ本文を取得して返す。
 
     処理順が重要:
-      1. 一覧から全記事のタイトル＋URLだけを軽く集める（上限なし）
+      1. 公開トップページから全記事のタイトル＋URLを集める（ログイン前・上限なし）
       2. 全タイトルでキーワード判定 → ヒットを絞り込む
-      3. ヒットした記事だけ本文を深掘りして要約材料にする
+      3. ヒットがあればログインし、ヒット記事だけ本文を深掘りして要約材料にする
 
-    本文取得は記事ごとにページ遷移する重い処理。先にタイトルで判定することで、
-    一覧の全記事が判定対象になり、件数上限で後ろの記事を取りこぼすことがなくなる。
+    一覧をログイン前の公開ページから取るのが肝。会員ログイン後のトップは一覧が
+    絞り込まれ、下部のカテゴリ（自動車流通など）の記事が一覧から消えるため、
+    「キーワードはあるのに拾えない」取りこぼしが起きる。
+    本文は有料ログイン制なので、要約材料が必要なヒット記事の取得時だけログインする。
 
     戻り値: (ヒット記事のリスト, 一覧でスキャンした総記事数)
     """
@@ -76,23 +77,9 @@ async def scrape_articles(cfg: dict, keywords: list[str]) -> tuple[list[dict], i
         )
         page = await ctx.new_page()
 
-        # --- ログイン（本文は有料ログイン制のため、要約材料の取得に必要）---
-        print("[1/4] ログイン中...")
-        await page.goto(cfg["source"]["login_url"], wait_until="domcontentloaded", timeout=30000)
-        try:
-            await page.fill('input[name="email"], input[type="email"], input[name="username"]',
-                            cfg["source"]["username"])
-            await page.fill('input[name="password"], input[type="password"]',
-                            cfg["source"]["password"])
-            await page.click('button[type="submit"], input[type="submit"]')
-            await page.wait_for_load_state("domcontentloaded", timeout=30000)
-            print("   → ログイン完了")
-        except Exception as e:
-            print(f"   [WARN] ログイン操作に問題が発生しました: {e}")
-
-        # --- 記事一覧を取得（タイトル＋URLのみ。本文はまだ取らない）---
-        print("[2/4] 記事一覧のタイトルを取得中...")
-        await page.goto(cfg["source"]["url"], wait_until="domcontentloaded", timeout=30000)
+        # --- 記事一覧を取得（ログイン前の公開トップページ。タイトル＋URLのみ）---
+        print("[1/4] 記事一覧のタイトルを取得中...")
+        await page.goto(cfg["source"]["url"], wait_until="load", timeout=30000)
 
         raw = await page.eval_on_selector_all(
             "a[href]",
@@ -121,6 +108,24 @@ async def scrape_articles(cfg: dict, keywords: list[str]) -> tuple[list[dict], i
         # --- タイトルでキーワード判定（一覧の全記事が対象）---
         matched = filter_by_keywords(candidates, keywords)
         print(f"   → うち {len(matched)} 件がキーワードにヒット")
+
+        if not matched:
+            await browser.close()
+            return [], len(candidates)
+
+        # --- ログイン（本文は有料ログイン制のため、要約材料の取得に必要）---
+        print("[2/4] ログイン中...")
+        await page.goto(cfg["source"]["login_url"], wait_until="domcontentloaded", timeout=30000)
+        try:
+            await page.fill('input[name="email"], input[type="email"], input[name="username"]',
+                            cfg["source"]["username"])
+            await page.fill('input[name="password"], input[type="password"]',
+                            cfg["source"]["password"])
+            await page.click('button[type="submit"], input[type="submit"]')
+            await page.wait_for_load_state("domcontentloaded", timeout=30000)
+            print("   → ログイン完了")
+        except Exception as e:
+            print(f"   [WARN] ログイン操作に問題が発生しました: {e}")
 
         # --- ヒットした記事だけ本文を取得（要約材料）---
         print("[3/4] ヒット記事の本文を取得中...")

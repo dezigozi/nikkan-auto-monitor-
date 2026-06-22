@@ -240,7 +240,15 @@
 
 <!-- ===== 設定タブ ===== -->
 <div x-show="tab==='settings'" class="max-w-screen-xl mx-auto px-5 py-6 space-y-6">
-  <h2 class="text-lg font-bold text-slate-800">設定</h2>
+  <div class="flex items-center gap-3">
+    <button @click="tab='report'"
+      class="flex items-center gap-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>ニュース画面に戻る
+    </button>
+    <h2 class="text-lg font-bold text-slate-800">設定</h2>
+  </div>
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
     <!-- キーワード -->
@@ -250,34 +258,27 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
         </svg>監視キーワード
       </h3>
-      <p class="text-xs text-slate-400 mb-2">一覧は <code class="text-slate-500">keywords.json</code>（リポジトリで管理）を読み込んで表示しています。scraper 実行時も同じファイルが使われます。</p>
-      <p class="text-xs text-amber-700 bg-amber-50 rounded-lg px-2 py-1.5 mb-4">キーワードの追加・削除は <code class="font-mono">keywords.json</code> を編集して GitHub にプッシュしてください。下の編集はプレビュー用です（保存でダウンロードされるのは config.json 全体のみ）。</p>
-      <div class="space-y-2 mb-4">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">
+          <span class="w-2 h-2 bg-green-500 rounded-full"></span>現在の監視キーワード
+        </span>
+        <span class="text-sm font-bold text-slate-700"><span x-text="settings.keywords.length"></span> 件</span>
+        <span class="text-[10px] text-slate-400">GitHub の keywords.json と同期</span>
+      </div>
+      <p class="text-xs text-slate-500 mb-3">下が今スクレイパーで使われている監視キーワードです（これが現役の一覧）。</p>
+      <div class="flex flex-wrap gap-2 mb-4">
         <template x-for="(kw, i) in settings.keywords" :key="i">
-          <div class="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">
-            <div class="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
-            <input type="text" :value="kw" @change="settings.keywords[i] = $event.target.value"
-              class="flex-1 text-sm bg-transparent border-none focus:outline-none text-slate-700 font-medium">
-            <button @click="settings.keywords.splice(i,1)"
-              class="text-slate-300 hover:text-red-500 transition-colors">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
-          </div>
+          <span class="inline-flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-full pl-2.5 pr-3 py-1.5 text-sm text-slate-700 font-medium">
+            <span class="text-[10px] text-slate-400 font-mono" x-text="i+1"></span>
+            <span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+            <span x-text="kw"></span>
+          </span>
         </template>
+        <span x-show="!settings.keywords.length" class="text-sm text-slate-400">読み込み中…</span>
       </div>
-      <div class="flex gap-2">
-        <input x-model="newKeyword" type="text" placeholder="新しいキーワードを入力..."
-          @keydown.enter="addKeyword()"
-          class="flex-1 text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400">
-        <button @click="addKeyword()"
-          class="bg-red-700 hover:bg-red-800 text-white text-sm px-4 py-2 rounded-lg transition-colors font-medium">追加</button>
-      </div>
-      <p class="text-xs text-slate-400 mt-2">※ ログイン・Slack 等は config.json。監視語は keywords.json を編集してください。</p>
-      <div class="mt-4 pt-4 border-t border-slate-100 flex justify-end">
-        <button @click="saveSettings()"
-          class="bg-slate-800 hover:bg-slate-900 text-white text-sm px-5 py-2 rounded-lg transition-colors font-medium">保存する</button>
+      <div class="text-xs text-amber-800 bg-amber-50 rounded-lg px-3 py-2.5 leading-relaxed">
+        <p class="font-bold mb-1">キーワードを追加・削除するには</p>
+        <p>リポジトリの <code class="font-mono">keywords.json</code> を編集して保存 → <code class="font-mono">キーワード更新プッシュ.bat</code> をダブルクリックでGitHubに反映されます。</p>
       </div>
     </div>
 

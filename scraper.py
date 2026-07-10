@@ -173,6 +173,15 @@ def filter_by_keywords(articles: list[dict], keywords: list[str]) -> list[dict]:
 # =====================
 #  OpenRouter(無料LLM) で要約
 # =====================
+# 無料モデルは配信プロバイダーが1社しかないものが多く、そこが混雑すると
+# その日の要約が全滅する。配信元が異なるモデルを並べてフォールバックさせる。
+DEFAULT_FALLBACK_MODELS = [
+    "qwen/qwen3-next-80b-a3b-instruct:free",   # Venice
+    "google/gemma-4-31b-it:free",              # Google AI Studio / OpenInference
+    "nvidia/nemotron-3-super-120b-a12b:free",  # Nvidia
+    "meta-llama/llama-3.3-70b-instruct:free",  # Venice
+]
+
 def summarize_article(client: OpenAI, model_name: str, article: dict, length: int) -> str:
     prompt = (
         f"以下の自動車業界ニュース記事を、{length}字程度で日本語要約してください。\n"
@@ -187,9 +196,38 @@ def summarize_article(client: OpenAI, model_name: str, article: dict, length: in
         model=model_name,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3,
-        max_tokens=length * 4 + 100,
+        # gpt-oss 等の reasoning 系モデルは思考にもトークンを消費するため余裕を持たせる。
+        # 足りないと「正常応答なのに本文が空」になり、要約が無言で消える。
+        max_tokens=2000,
     )
     return (response.choices[0].message.content or "").strip()
+
+
+def summarize_with_fallback(client: OpenAI, models: list[str], article: dict,
+                            length: int, fail_streak: dict) -> tuple[str, str, str]:
+    """モデルを順に試し、最初に取れた要約を返す。
+
+    例外だけでなく「空の要約」も失敗として次のモデルへ切り替える。
+    fail_streak はモデルごとの連続失敗回数。2回連続で失敗したモデルは
+    この実行内ではスキップして時間を浪費しない（全モデル該当時は全部再挑戦）。
+
+    戻り値: (要約, 使用モデル, 最後のエラー内容)
+    """
+    candidates = [m for m in models if fail_streak.get(m, 0) < 2] or models
+    last_error = ""
+    for model_name in candidates:
+        try:
+            summary = summarize_article(client, model_name, article, length)
+        except Exception as e:
+            summary = ""
+            last_error = f"{model_name}: {e}"
+        if summary:
+            fail_streak[model_name] = 0
+            return summary, model_name, ""
+        fail_streak[model_name] = fail_streak.get(model_name, 0) + 1
+        if not last_error:
+            last_error = f"{model_name}: 空の応答"
+    return "", "", last_error
 
 
 # =====================
@@ -220,6 +258,17 @@ def post_to_slack(cfg: dict, articles: list[dict], date_str: str):
         },
         {"type": "divider"}
     ]
+
+    # 要約失敗を無音にしない（無料LLMの混雑・制限で失敗した日に気づけるように）
+    failed_count = sum(1 for a in articles if not (a.get("summary") or "").strip())
+    if failed_count:
+        blocks.insert(2, {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"⚠️ うち *{failed_count}件* は要約を取得できませんでした（無料LLMの混雑・制限の可能性）"
+            }
+        })
 
     # 各記事ブロック
     # 元記事は有料ログイン制のため、要約を本文としてそのまま読めるよう前面に出す。
@@ -330,18 +379,23 @@ async def main():
             api_key=or_api_key,
             base_url=or_cfg.get("base_url", "https://openrouter.ai/api/v1"),
             timeout=float(or_cfg.get("timeout", 30)),
-            max_retries=int(or_cfg.get("max_retries", 3)),  # 429/5xx/timeout を自動再試行
+            # モデル自体をフォールバックさせるため、同一モデルへのリトライは最小限にする
+            max_retries=int(or_cfg.get("max_retries", 1)),
             default_headers={"X-Title": "nikkan-auto-monitor"},  # OpenRouter 推奨（任意）
         )
-        model_name = or_cfg.get("model", "openai/gpt-oss-120b:free")
+        models = [or_cfg.get("model", "openai/gpt-oss-120b:free")]
+        models += or_cfg.get("fallback_models", DEFAULT_FALLBACK_MODELS)
+        models = list(dict.fromkeys(models))  # 順序維持で重複除去
         summary_length = or_cfg.get("summary_length", 150)
+        fail_streak: dict = {}
         for i, art in enumerate(matched, 1):
-            try:
-                art["summary"] = summarize_article(or_client, model_name, art, summary_length)
-                print(f"   [{i}/{len(matched)}] 要約完了: {art['title'][:40]}...")
-            except Exception as e:
-                print(f"   [WARN] 要約失敗: {e}")
-                art["summary"] = ""
+            summary, used_model, err = summarize_with_fallback(
+                or_client, models, art, summary_length, fail_streak)
+            art["summary"] = summary
+            if summary:
+                print(f"   [{i}/{len(matched)}] 要約完了 ({used_model}): {art['title'][:40]}...")
+            else:
+                print(f"   [WARN] [{i}/{len(matched)}] 全モデルで要約失敗: {err}")
     else:
         print("\n[3/4] スキップ（OPENROUTER_API_KEY が未設定）")
         for art in matched:

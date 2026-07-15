@@ -8,6 +8,7 @@
 
 import json
 import os
+import re
 import sys
 import asyncio
 from datetime import datetime
@@ -97,7 +98,13 @@ async def scrape_articles(cfg: dict, keywords: list[str]) -> tuple[list[dict], i
             href = lk["href"]
             if "netdenjd.com" not in href or href in seen:
                 continue
+            # カテゴリ一覧などは記事ではない。キーワードを含む長い title 属性を
+            # 持つため、文字数だけの判定では記事として混入してしまう。
+            if "/archives/category/" in href or "/archives/tag/" in href:
+                continue
             title = lk["title"] if len(lk["title"]) > len(lk["text"]) else lk["text"]
+            if title.lower().startswith("view all posts filed under"):
+                continue
             if len(title) <= 20:   # ナビ・カテゴリ等の短いリンクを除外
                 continue
             seen.add(href)
@@ -185,7 +192,9 @@ DEFAULT_FALLBACK_MODELS = [
 def summarize_article(client: OpenAI, model_name: str, article: dict, length: int) -> str:
     prompt = (
         f"以下の自動車業界ニュース記事を、{length}字程度で日本語要約してください。\n"
-        "重要なポイント（数字・企業名・新技術・市場動向）を含めて簡潔にまとめてください。\n\n"
+        "重要なポイント（数字・企業名・新技術・市場動向）を含めて簡潔にまとめてください。\n"
+        "記事にない情報は推測・補完しないでください。\n"
+        "回答は要約本文1段落だけにし、前置き、説明、文字数計算、思考過程、引用符は出力しないでください。\n\n"
         f"【タイトル】{article['title']}\n\n"
         f"【本文】\n{article.get('body', '')[:1500]}\n\n"
         f"要約（{length}字程度）:"
@@ -194,13 +203,49 @@ def summarize_article(client: OpenAI, model_name: str, article: dict, length: in
     # OpenAI互換 chat.completions（429/5xx/timeout は client の max_retries で自動再試行）
     response = client.chat.completions.create(
         model=model_name,
-        messages=[{"role": "user", "content": prompt}],
+        messages=[
+            {
+                "role": "system",
+                "content": "あなたは日本語のニュース編集者です。完成した要約本文だけを出力します。"
+            },
+            {"role": "user", "content": prompt},
+        ],
         temperature=0.3,
         # gpt-oss 等の reasoning 系モデルは思考にもトークンを消費するため余裕を持たせる。
         # 足りないと「正常応答なのに本文が空」になり、要約が無言で消える。
         max_tokens=2000,
     )
     return (response.choices[0].message.content or "").strip()
+
+
+SUMMARY_LEAK_PATTERNS = (
+    r"\bwe need\b",
+    r"\blet(?:'|’)s\b",
+    r"\bcount (?:the )?characters?\b",
+    r"\bnow count\b",
+    r"\bfinal summary\b",
+    r"文字数を(?:数|カウント)",
+    r"思考過程",
+)
+
+
+def validate_summary(summary: str, target_length: int) -> tuple[bool, str]:
+    """要約本文として不自然な応答を弾き、別モデルへの切り替え理由を返す。"""
+    text = summary.strip()
+    if not text:
+        return False, "空の応答"
+    if len(text) > max(500, target_length * 3):
+        return False, f"長すぎる応答 ({len(text)}文字)"
+    if text.count("\n") > 2:
+        return False, "複数段落の応答"
+    for pattern in SUMMARY_LEAK_PATTERNS:
+        if re.search(pattern, text, flags=re.IGNORECASE):
+            return False, "思考過程を含む応答"
+    # 日本語記事の要約なのに日本語がほぼない回答も採用しない。
+    japanese_chars = len(re.findall(r"[ぁ-んァ-ヶ一-龠]", text))
+    if japanese_chars < 20:
+        return False, "日本語が不足した応答"
+    return True, ""
 
 
 def summarize_with_fallback(client: OpenAI, models: list[str], article: dict,
@@ -221,12 +266,12 @@ def summarize_with_fallback(client: OpenAI, models: list[str], article: dict,
         except Exception as e:
             summary = ""
             last_error = f"{model_name}: {e}"
-        if summary:
+        valid, reason = validate_summary(summary, length)
+        if valid:
             fail_streak[model_name] = 0
             return summary, model_name, ""
         fail_streak[model_name] = fail_streak.get(model_name, 0) + 1
-        if not last_error:
-            last_error = f"{model_name}: 空の応答"
+        last_error = f"{model_name}: {reason}"
     return "", "", last_error
 
 

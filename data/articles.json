@@ -1,5 +1,83 @@
 [
   {
+    "date": "2026年7月19日",
+    "fetched_at": "21:55",
+    "scanned": 90,
+    "articles": [
+      {
+        "id": "2026年7月19日-1",
+        "tags": [
+          "自動運転"
+        ],
+        "time": "",
+        "title": "〈永田町視座　議員に聞く〉西村康稔衆院議員（自民党・自動車議連会長）　自動運転、米中とも技術的に遜色なし",
+        "url": "https://www.netdenjd.com/archives/681154",
+        "summary": ""
+      },
+      {
+        "id": "2026年7月19日-2",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックスセブン、奈良県に生駒店をオープン　中古車のカーズも併設",
+        "url": "https://www.netdenjd.com/archives/681800",
+        "summary": ""
+      },
+      {
+        "id": "2026年7月19日-3",
+        "tags": [
+          "自動運転"
+        ],
+        "time": "",
+        "title": "総務省、自動運転向け通信インフラ整備を加速　5.9GHz帯は2028年度から東京・名古屋・大阪で先行導入",
+        "url": "https://www.netdenjd.com/archives/681717",
+        "summary": ""
+      },
+      {
+        "id": "2026年7月19日-4",
+        "tags": [
+          "自動運転"
+        ],
+        "time": "",
+        "title": "三菱地所、自動運転トラックに対応する物流施設のシステムを実証",
+        "url": "https://www.netdenjd.com/archives/681817",
+        "summary": ""
+      },
+      {
+        "id": "2026年7月19日-5",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "アステモと東北大、劣化プラスチックの強度を回復する技術を開発　リサイクル材料の品質向上などに貢献",
+        "url": "https://www.netdenjd.com/archives/681806",
+        "summary": ""
+      },
+      {
+        "id": "2026年7月19日-6",
+        "tags": [
+          "リビルト",
+          "NGP"
+        ],
+        "time": "",
+        "title": "NGPがリビルトメーカーなど交え方針説明会　2027年度めどに手数料の優遇処置導入も",
+        "url": "https://www.netdenjd.com/archives/677883",
+        "summary": ""
+      },
+      {
+        "id": "2026年7月19日-7",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "経産省と環境省、自動車リサイクルの取り組み強化　作業部会立ち上げ制度など改定へ　重要資源の国内循環を目指す",
+        "url": "https://www.netdenjd.com/archives/675606",
+        "summary": ""
+      }
+    ]
+  },
+  {
     "date": "2026年7月16日",
     "fetched_at": "22:09",
     "scanned": 93,
@@ -2537,40 +2615,6 @@
         "time": "",
         "title": "〈人事・組織〉デンソーテン（2026/6/19）",
         "url": "https://www.netdenjd.com/archives/671774"
-      }
-    ]
-  },
-  {
-    "date": "2026年6月7日",
-    "fetched_at": "22:58",
-    "scanned": 54,
-    "articles": [
-      {
-        "id": "2026年6月7日-1",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "日本メーカー4社の2026年5月米国新車販売、6.1％増で3カ月ぶりプラス　スバルとマツダは10カ月ぶりに増加",
-        "url": "https://www.netdenjd.com/archives/671592"
-      },
-      {
-        "id": "2026年6月7日-2",
-        "tags": [
-          "デンソー"
-        ],
-        "time": "",
-        "title": "デンソー、大阪大とネーミングライツ契約　2029年3月末まで",
-        "url": "https://www.netdenjd.com/archives/657275"
-      },
-      {
-        "id": "2026年6月7日-3",
-        "tags": [
-          "デンソー"
-        ],
-        "time": "",
-        "title": "デンソー、東大と長期包括連携　走行中無線給電など社会実装へ",
-        "url": "https://www.netdenjd.com/archives/653843"
       }
     ]
   }

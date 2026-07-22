@@ -9,3 +9,6 @@ __pycache__/
 
 # Windows
 Thumbs.db
+
+# Claude Code（マシン固有の権限設定などはコミットしない）
+.claude/

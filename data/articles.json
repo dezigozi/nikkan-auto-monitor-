@@ -1,5 +1,73 @@
 [
   {
+    "date": "2026年8月25日",
+    "fetched_at": "21:31",
+    "scanned": 84,
+    "articles": [
+      {
+        "id": "2026年8月25日-1",
+        "tags": [
+          "リース"
+        ],
+        "time": "",
+        "title": "〈個人リース〉市場成長の裏で顧客トラブル増加　リスクや精算ルールなど丁寧な説明で理解浸透を",
+        "url": "https://www.netdenjd.com/archives/689550",
+        "summary": "個人リース市場が拡大する一方で、利用者間のトラブルが増加しており、業界はリスクや精算ルールを丁寧に説明し、利用者の理解を深める取り組みを進めている。"
+      },
+      {
+        "id": "2026年8月25日-2",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "新車ディーラー、エンジンオイル不足で7割が入庫制限　仕入れ価格上昇も3割が転嫁できず　日刊自動車新聞調べ",
+        "url": "https://www.netdenjd.com/archives/690052",
+        "summary": ""
+      },
+      {
+        "id": "2026年8月25日-3",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックスセブンの補修部品子会社、モビリティプロダクトソリューションズジャパンに社名変更",
+        "url": "https://www.netdenjd.com/archives/690946",
+        "summary": ""
+      },
+      {
+        "id": "2026年8月25日-4",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックスセブン子会社のビーモ、日比谷駐車場で予約サービスの実証実験",
+        "url": "https://www.netdenjd.com/archives/690644",
+        "summary": "オートバックスセブン子会社ビーモは、代表米山玲男（東京都江東区）が開発した駐車場検索アプリを基に、日比谷駐車場で事前予約と車両ナンバー認識を組み合わせた駐車スペース予約サービス「ビーモパーキング」の実証実験を2026年8月24日から開始すると発表した。"
+      },
+      {
+        "id": "2026年8月25日-5",
+        "tags": [
+          "自動運転",
+          "パナソニック"
+        ],
+        "time": "",
+        "title": "T2とパナソニックEW、夜間道路の明るさによる自動運転トラックの安全走行への影響を検証",
+        "url": "https://www.netdenjd.com/archives/691608",
+        "summary": ""
+      },
+      {
+        "id": "2026年8月25日-6",
+        "tags": [
+          "自動運転"
+        ],
+        "time": "",
+        "title": "東京工科大、八王子市と自動運転導入に向けたコンソーシアム　スクールバスで実証実験も",
+        "url": "https://www.netdenjd.com/archives/684056",
+        "summary": ""
+      }
+    ]
+  },
+  {
     "date": "2026年8月24日",
     "fetched_at": "21:31",
     "scanned": 85,
@@ -2942,134 +3010,6 @@
         "title": "トヨタ、AIで品質管理システム構築　AWSと共同開発　新車開発を効率化",
         "url": "https://www.netdenjd.com/archives/679859",
         "summary": "We need to produce a Japanese summary about 150 characters (approx). Include key points: numbers, company name, new technology, market trend. The article: Toyota building AI-based quality management system, jointly developed with AWS, to improve new car development efficiency. It mentions 2024 certification fraud issue, consolidating scattered development evidence documents. Probably mention year 2026 (article date). Need about 150 Japanese characters. Let's craft ~150 characters.\n\nCount characters: Let's aim for ~150 characters (including punctuation). We'll produce maybe 145 characters.\n\nDraft: \"トヨタ自動車は2024年の認証不正を受け、AWSと共同でAIを活用した品質管理システムを開発。開発根拠文書を集約し、ベテラン依存を脱却して新車開発の効率化を図る。2026年7月発表。\"\n\nNow count characters: Let's count.\n\nトヨタ自動車は2024年の認証不正を受け、AWSと共同でAIを活用した品質管理システムを開発。開発根拠文書を集約し、ベテラン依存を脱却して新車開発の効率化を図る。2026年7月発表。\n\nCount manually: We'll count each character including punctuation.\n\nト(1)ヨ(2)タ(3)自(4)動(5)車(6)は(7)2(8)0(9)2(10)4(11)年(12)の(13)認(14)証(15)不(16)正(17)を(18)受(19)け(20)、(21)A(22)W(23)S(24)と(25)共(26)同(27)で(28)A(29)I(30)を(31)活(32)用(33)し(34)た(35)品(36)質(37)管(38)理(39)シ(40)ス(41)テ(42)ム(43)を(44)開(45)発(46)。(47)開(48)発(49)根(50)拠(51)文(52)書(53)を(54)集(55)約(56)し(57)、(58)ベ(59)テ(60)ラ(61)ン(62)依(63)存(64)を(65)脱(66)却(67)し(68)て(69)新(70)車(71)開(72)発(73)の(74)効(75)率(76)化(77)を(78)図(79)る(80)。(81)2(82)0(83)2(84)6(85)年(86)7(87)月(88)発(89)表(90)。(91)\n\nSo 91 characters. Need ~150, we can add more details: mention that system aims to reduce development time by X%, maybe mention that it's part of digital transformation, mention that it's expected to cut lead time by 20% (just example). But we must stick to facts from article; we don't have exact numbers. We can mention that it consolidates scattered documents, aims to improve efficiency, and that it's part of broader AI strategy. We can add phrase about \"新車開発サイクルの短縮を狙う\". Let's expand.\n\nAdd: \"これにより、開発工程の可視化と迅速な意思決定が可能になり、市場投入までの期間短縮が期待される。\"\n\nNow count added characters.\n\nLet's create final summary:\n\n\"トヨタ自動車は2024年の認証不正を受け、AWSと共同でAIを活用した品質管理システムを開発。開発根拠文書を集約し、ベテラン依存を脱却して新車開発の効率化を図る。これにより開発工程の可視化と迅速な意思決定が可能になり、市場投入までの期間短縮が期待される。2026年7月発表。\"\n\nNow count.\n\nWe'll count characters including punctuation.\n\nトヨタ自動車は2024年の認証不正を受け、AWSと共同でAIを活用した品質管理システムを開発。開発根拠文書を集約し、ベテラン依存を脱却して新車開発の効率化を図る。これにより開発工程の可視化と迅速な意思決定が可能になり、市場投入までの期間短縮が期待される。2026年7月発表。\n\nLet's count.\n\nI'll count each segment.\n\nトヨタ自動車は2024年の認証不正を受け、AWSと共同でAIを活用した品質管理システムを開発。\n\nCount:\n\nト(1)ヨ2タ3自4動5車6は7 2? Actually need to count each character including numbers and punctuation. Let's just count using groups.\n\nI'll write the string and count manually with indexes.\n\nString:\n\nトヨタ自動車は2024年の認証不正を受け、AWSと共同でAIを活用した品質管理システムを開発。\n\nLet's enumerate:\n\n1 ト\n2 ヨ\n3 タ\n4 自\n5 動\n6 車\n7 は\n8 2\n9 0\n10 2\n11 4\n12 年\n13 の\n14 認\n15 証\n16 不\n17 正\n18 を\n19 受\n20 け\n21 、\n22 A\n23 W\n24 S\n25 と\n26 共\n27 同\n28 で\n29 A\n30 I\n31 を\n32 活\n33 用\n34 し\n35 た\n36 品\n37 質\n38 管\n39 理\n40 シ\n41 ス\n42 テ\n43 ム\n44 を\n45 開\n46 発\n47 。\n\nNow after that we have space? Actually there is a period then next sentence starts.\n\nNext sentence: 開発根拠文書を集約し、ベテラン依存を脱却して新車開発の効率化を図る。\n\nContinue counting from 48.\n\n48 開\n49 発\n50 根\n51 拠\n52 文\n53 書\n54 を\n55 集\n56 約\n57 し\n58 、\n59 ベ\n60 テ\n61 ラ\n62 ン\n63 依\n64 存\n65 を\n66 脱\n67 却\n68 し\n69 て\n70 新\n71 車\n72 開\n73 発\n74 の\n75 効\n76 率\n77 化\n78 を\n79 図\n80 る\n81 。\n\nNext sentence: これにより開発工程の可視化と迅速な意思決定が可能になり、市場投入までの期間短縮が期待される。\n\nContinue from 82.\n\n82 此\n83 に\n84 よ\n85 り\n86 開\n87 発\n88 工\n89 程\n90 の\n91 可\n92 視\n93 化\n94 と\n95 迅\n96 速\n97 な\n98 意\n99 思\n100 決\n101 定\n102 が\n103 可\n104 能\n105 に\n106 な\n107 り\n108 、\n109 市\n110 場\n111 投\n112 入\n113 まで\n114 の\n115 期\n116 間\n117 短\n118 縮\n119 が\n12"
-      }
-    ]
-  },
-  {
-    "date": "2026年7月13日",
-    "fetched_at": "22:02",
-    "scanned": 118,
-    "articles": [
-      {
-        "id": "2026年7月13日-2",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "2026年4～6月期の新車販売、新型車効果で反転　7％増の113.3万台　ホンダが5期、日産は7期ぶりプラス",
-        "url": "https://www.netdenjd.com/archives/679372",
-        "summary": ""
-      },
-      {
-        "id": "2026年7月13日-3",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "2026年1～6月の中古車登録・届け出台数、2年ぶりプラス　新車市場の好転で中古車流通が拡大",
-        "url": "https://www.netdenjd.com/archives/680651",
-        "summary": "2026年上期の中古車登録台数は前年同期比0.7％増の337万1087台で2年ぶりプラス。軽中古車の需要が堅調で、新車市場の回復が流通を押し上げた。（自販連・全軽自協発表）"
-      },
-      {
-        "id": "2026年7月13日-4",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "2026年1～6月の中古輸入車登録台数、2年ぶりプラス　新車値上げで需要高まる",
-        "url": "https://www.netdenjd.com/archives/680657",
-        "summary": ""
-      },
-      {
-        "id": "2026年7月13日-5",
-        "tags": [
-          "自動運転"
-        ],
-        "time": "",
-        "title": "NTTモビリティ、自動運転レベル4見据えた遠隔支援ソリューション　「N対M型」の運行体制実現へ提供開始",
-        "url": "https://www.netdenjd.com/archives/680332",
-        "summary": "NTTモビリティは2026年7月8日、レベル4自動運転（特定条件下における完全自動運転）を見据えた遠隔運行支援ソリューション「NTTモビリティ 運行アシスト」の提供を開始し、N対M型運行体制の実現を目指す。"
-      },
-      {
-        "id": "2026年7月13日-6",
-        "tags": [
-          "リサイクル"
-        ],
-        "time": "",
-        "title": "産総研・東大・九大、混合廃プラからポリウレタンを分離回収する新手法　自動車シートなどのリサイクルに",
-        "url": "https://www.netdenjd.com/archives/680636",
-        "summary": "産総研・東大・九大は、混合廃プラスチックからポリウレタンのみを選択的に分解・回収する新リサイクル手法を開発。2026年7月発表、従来の機械リサイクルでは難しかった混合廃プラから高純度ポリウレタンを取り出し、自動車シートなどの再生プラスチック原料確保および内装材の再利用率向上に寄与する。"
-      },
-      {
-        "id": "2026年7月13日-7",
-        "tags": [
-          "リビルト",
-          "NGP"
-        ],
-        "time": "",
-        "title": "NGPがリビルトメーカーなど交え方針説明会　2027年度めどに手数料の優遇処置導入も",
-        "url": "https://www.netdenjd.com/archives/677883",
-        "summary": "NGP日本自動車リサイクル事業協同組合（小林信夫理事長）と関連会社NGP（佐藤幸雄社長）は、提携リビルトメーカー18社とともに2026年度の第37期方針説明会を開催し、2027年度めどに手数料の優遇処置を導入すると発表した。"
-      },
-      {
-        "id": "2026年7月13日-9",
-        "tags": [
-          "リサイクル"
-        ],
-        "time": "",
-        "title": "経産省と環境省、自動車リサイクルの取り組み強化　作業部会立ち上げ制度など改定へ　重要資源の国内循環を目指す",
-        "url": "https://www.netdenjd.com/archives/675606",
-        "summary": ""
-      },
-      {
-        "id": "2026年7月13日-10",
-        "tags": [
-          "日本カーソリューションズ"
-        ],
-        "time": "",
-        "title": "〈人事・組織〉日本カーソリューションズ（2026/7/1）",
-        "url": "https://www.netdenjd.com/archives/680895",
-        "summary": "日本カーソリューションズは2026年7月1日付で人事異動を実施。平林義和氏が理事システム第一部長兼イノベーション推進部（NTT西日本）、有馬英樹氏がシステム第二部長兼同（NTTドコモソリューションズ）、河井健氏が財務部長に就任。"
-      },
-      {
-        "id": "2026年7月13日-11",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "近畿の2026年1～6月期新車販売、2年連続プラスに",
-        "url": "https://www.netdenjd.com/archives/680494",
-        "summary": "近畿2府4県の2026年1～6月期新車販売台数（軽自動車含む）は前年同期比0.5％増の34万7945台で、2年連続プラス。登録車は同0.3％増の23万1951台、軽自動車は同0.7％増の11万5994台でいずれも2年連続増加。"
-      },
-      {
-        "id": "2026年7月13日-12",
-        "tags": [
-          "ロータス"
-        ],
-        "time": "",
-        "title": "全日本ロータス同友会東北ブロック大会開催、ブロック結束力強化誓う",
-        "url": "https://www.netdenjd.com/archives/680711",
-        "summary": "2026年7月14日、秋田県鹿角市のホテルで第48回全日本ロータス同友会東北ブロック大会が開催され、ロータス同友と提携企業など約250人が参加。佐藤英樹ブロック長と中村全国会長があいさつし、ブロックの結束力強化とさらなる飛躍を誓った。"
-      },
-      {
-        "id": "2026年7月13日-13",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "九州・沖縄地区2026年6月の新車販売、4カ月年連続で前年超え　登録2桁伸長も軽は微減",
-        "url": "https://www.netdenjd.com/archives/680190",
-        "summary": "九州・沖縄地区の2026年6月新車販売は登録車＋軽自動車合計で前年同月比6.3％増の5万848台と4カ月連続で前年を上回り、登録車は2桁伸長、軽自動車はわずかにマイナス。これにより、地域全体の需要回復が続く中、登録車中心の伸びが顕著となった。"
-      },
-      {
-        "id": "2026年7月13日-14",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "トヨタ、AIで品質管理システム構築　AWSと共同開発　新車開発を効率化",
-        "url": "https://www.netdenjd.com/archives/679859",
-        "summary": "トヨタは2024年の認証不正を受け、AWSと共同でAIを用いた品質管理システムを開発。開発根拠文書を集約し、ベテラン依存を減らして新車開発の効率化を図る。システムはクラウド上で稼働し、リアルタイムデータ解析により品質リスクを予測・低減する。これにより、開発期間の短縮とコスト削減が期待される。"
       }
     ]
   }

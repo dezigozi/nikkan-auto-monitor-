@@ -1,5 +1,123 @@
 [
   {
+    "date": "2026年10月22日",
+    "fetched_at": "23:58",
+    "scanned": 103,
+    "articles": [
+      {
+        "id": "2026年10月22日-1",
+        "tags": [
+          "自動運転"
+        ],
+        "time": "",
+        "title": "スタンレー電気、10分の1サイズの小型LiDAR実用化へ　自動運転普及見据え数年内に",
+        "url": "https://www.netdenjd.com/archives/705047",
+        "summary": ""
+      },
+      {
+        "id": "2026年10月22日-2",
+        "tags": [
+          "自動運転"
+        ],
+        "time": "",
+        "title": "米エヌビディア、欧州で自動車業界との連携拡大　自動運転基盤の提供など",
+        "url": "https://www.netdenjd.com/archives/705355",
+        "summary": ""
+      },
+      {
+        "id": "2026年10月22日-3",
+        "tags": [
+          "自動運転",
+          "タクシー"
+        ],
+        "time": "",
+        "title": "中国ポニー、日本の複数地域で自動運転タクシー検討　MKと意見交換足掛かりに",
+        "url": "https://www.netdenjd.com/archives/705346",
+        "summary": ""
+      },
+      {
+        "id": "2026年10月22日-4",
+        "tags": [
+          "自動運転"
+        ],
+        "time": "",
+        "title": "東京工科大、自動運転バスの出発式　12月25日まで八王子駅と商業施設間で運行",
+        "url": "https://www.netdenjd.com/archives/704758",
+        "summary": ""
+      },
+      {
+        "id": "2026年10月22日-5",
+        "tags": [
+          "自動運転"
+        ],
+        "time": "",
+        "title": "ティアフォー、ミュンヘン工科大と自動運転システム研究拠点を開設",
+        "url": "https://www.netdenjd.com/archives/704784",
+        "summary": ""
+      },
+      {
+        "id": "2026年10月22日-6",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "〈語録〉日本自動車リサイクル機構（JAERA）　石井浩道代表理事",
+        "url": "https://www.netdenjd.com/archives/705376",
+        "summary": ""
+      },
+      {
+        "id": "2026年10月22日-7",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "中国地区の2026年4～9月新車販売、3年ぶりのプラスに",
+        "url": "https://www.netdenjd.com/archives/704938",
+        "summary": ""
+      },
+      {
+        "id": "2026年10月22日-8",
+        "tags": [
+          "自動運転"
+        ],
+        "time": "",
+        "title": "〈会見概要〉自工会記者会見　自動運転での協調へ「技術は世界で負けていない」",
+        "url": "https://www.netdenjd.com/archives/697868",
+        "summary": ""
+      },
+      {
+        "id": "2026年10月22日-9",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "埼玉県の2026年度上期新車販売、前年同期比5％増",
+        "url": "https://www.netdenjd.com/archives/704979",
+        "summary": ""
+      },
+      {
+        "id": "2026年10月22日-10",
+        "tags": [
+          "東京海上"
+        ],
+        "time": "",
+        "title": "東京海上日動、熊本県内ディーラーと協力し地元企業の脱炭素経営促進",
+        "url": "https://www.netdenjd.com/archives/704129",
+        "summary": ""
+      },
+      {
+        "id": "2026年10月22日-11",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "九州・沖縄地区2026年度上期新車販売、2年連続前年上回る　登録車はプラス",
+        "url": "https://www.netdenjd.com/archives/704436",
+        "summary": ""
+      }
+    ]
+  },
+  {
     "date": "2026年10月21日",
     "fetched_at": "23:55",
     "scanned": 99,
@@ -3549,83 +3667,6 @@
         "title": "ホンダ泉州、ホンダクリオ滋賀の全株式取得　合併に向けた準備へ　新車17拠点の営業網構築",
         "url": "https://www.netdenjd.com/archives/694293",
         "summary": ""
-      }
-    ]
-  },
-  {
-    "date": "2026年9月8日",
-    "fetched_at": "23:15",
-    "scanned": 91,
-    "articles": [
-      {
-        "id": "2026年9月8日-1",
-        "tags": [
-          "リース"
-        ],
-        "time": "",
-        "title": "フリートピットロック、車両情報管理システムの連携企業に北海道リース追加",
-        "url": "https://www.netdenjd.com/archives/695168",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月8日-2",
-        "tags": [
-          "オートバックス"
-        ],
-        "time": "",
-        "title": "オートバックスセブン、タイに新店舗オープン　現地で128店舗目",
-        "url": "https://www.netdenjd.com/archives/694451",
-        "summary": "オートバックスセブンは、タイで128店舗目となるカー"
-      },
-      {
-        "id": "2026年9月8日-3",
-        "tags": [
-          "自動運転"
-        ],
-        "time": "",
-        "title": "NTTモビリティとあいおいニッセイ同和、自動運転の安全性評価の高度化で連携",
-        "url": "https://www.netdenjd.com/archives/695164",
-        "summary": "NTTモビリティ（山下航太社長）とあいおいニッセイ同和損害保険は、両社のデータとノウハウを融合し、自動運転の安全性評価手法の高度化を目的とした共同実証を2026年9月9日に発表した。"
-      },
-      {
-        "id": "2026年9月8日-4",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "四国の2026年8月新車販売、5カ月連続プラス　前年同月比1.8％増",
-        "url": "https://www.netdenjd.com/archives/694374",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月8日-5",
-        "tags": [
-          "ロータス"
-        ],
-        "time": "",
-        "title": "全日本ロータス同友会東北ブロック「トップセミナー」開催　テーマは整備士の生産性向上",
-        "url": "https://www.netdenjd.com/archives/693774",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月8日-6",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "8月の道内新車販売、5カ月連続プラス　登録車は新型車効果",
-        "url": "https://www.netdenjd.com/archives/694399",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月8日-7",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "ホンダ泉州、ホンダクリオ滋賀の全株式取得　合併に向けた準備へ　新車17拠点の営業網構築",
-        "url": "https://www.netdenjd.com/archives/694293",
-        "summary": "ホンダ泉州がホンダクリオ滋賀の全株式を取得し、合併に向けた準備を開始。新車17拠点の営業網を構築し、関西地域の販売基盤を強化する。"
       }
     ]
   }

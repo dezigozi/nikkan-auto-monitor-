@@ -1,5 +1,132 @@
 [
   {
+    "date": "2026年11月12日",
+    "fetched_at": "02:08",
+    "scanned": 101,
+    "articles": [
+      {
+        "id": "2026年11月12日-1",
+        "tags": [
+          "バッテリー"
+        ],
+        "time": "",
+        "title": "日本総研、一般社団法人「EV電池スマートユーザー推進協議会」を設立　EVバッテリーの循環促進に力",
+        "url": "https://www.netdenjd.com/archives/710124",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-2",
+        "tags": [
+          "タクシー"
+        ],
+        "time": "",
+        "title": "国交省、ロボタクシー普及でシステムベンダーもリコール対象に　行政処分や事故報告義務付けなどを検討",
+        "url": "https://www.netdenjd.com/archives/709078",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-3",
+        "tags": [
+          "自動運転"
+        ],
+        "time": "",
+        "title": "ティアフォー、地図やセンサーの有無に対応するE2E自動運転技術を開発　オープンソースで公開",
+        "url": "https://www.netdenjd.com/archives/710163",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-4",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックスセブン、近江八幡店をリニューアル　商業施設内に移転",
+        "url": "https://www.netdenjd.com/archives/710128",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-5",
+        "tags": [
+          "オートバックス"
+        ],
+        "time": "",
+        "title": "オートバックスセブン、札幌にコーティング専門店オープン　北海道で初",
+        "url": "https://www.netdenjd.com/archives/708593",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-6",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "ブロードリーフ、BtoBの部品ネットでJTPの大型車リサイクル品　調達先多様化で利便性向上",
+        "url": "https://www.netdenjd.com/archives/708122",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-7",
+        "tags": [
+          "リース"
+        ],
+        "time": "",
+        "title": "〈人事・組織〉JA三井リース（2026/11/1）",
+        "url": "https://www.netdenjd.com/archives/709955",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-8",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "〈2026年10月の国内新車販売台数とブランド別シェア〉",
+        "url": "https://www.netdenjd.com/archives/708849",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-9",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "山梨県の2026年10月新車販売、3カ月ぶりプラス",
+        "url": "https://www.netdenjd.com/archives/709381",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-10",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "自動車リサイクルのKMI、SDGSつながるマルシェに出展",
+        "url": "https://www.netdenjd.com/archives/709901",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-11",
+        "tags": [
+          "リサイクル"
+        ],
+        "time": "",
+        "title": "山形県自動車販売店リサイクルセンター　ジオポリマーコンクリート　廃自動車ガラスを活用　資源循環目指し",
+        "url": "https://www.netdenjd.com/archives/709526",
+        "summary": ""
+      },
+      {
+        "id": "2026年11月12日-12",
+        "tags": [
+          "新車"
+        ],
+        "time": "",
+        "title": "2026年10月の新車販売ランキング、ヤリスが12カ月ぶり首位　軽トップは6カ月連続でN-BOX",
+        "url": "https://www.netdenjd.com/archives/708834",
+        "summary": ""
+      }
+    ]
+  },
+  {
     "date": "2026年11月11日",
     "fetched_at": "01:04",
     "scanned": 96,
@@ -3766,174 +3893,6 @@
         "time": "",
         "title": "連載「ディーラーアンケート2026」（5）新車供給正常化へ　業績拡大後押しも効果はまばら",
         "url": "https://www.netdenjd.com/archives/698135",
-        "summary": ""
-      }
-    ]
-  },
-  {
-    "date": "2026年9月29日",
-    "fetched_at": "00:54",
-    "scanned": 96,
-    "articles": [
-      {
-        "id": "2026年9月29日-1",
-        "tags": [
-          "自動運転"
-        ],
-        "time": "",
-        "title": "〈インタビュー〉デクセリアルズ、松本謙太郎氏　反射防止フィルムと自動運転向け光学製品を両軸に",
-        "url": "https://www.netdenjd.com/archives/698807",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-2",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "連載「ディーラーアンケート2026」（5）新車供給正常化へ　業績拡大後押しも効果はまばら",
-        "url": "https://www.netdenjd.com/archives/698135",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-3",
-        "tags": [
-          "カーナビ",
-          "パナソニック"
-        ],
-        "time": "",
-        "title": "パナソニックオートモーティブシステムズ、市販カーナビ事業から撤退　30年超の歴史に幕　2027年3月までに生産終了",
-        "url": "https://www.netdenjd.com/archives/698359",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-4",
-        "tags": [
-          "リサイクル"
-        ],
-        "time": "",
-        "title": "出光興産、使用済みプラからナフサ製造に成功　グループ内で資源循環型ケミカルリサイクル製品の供給体制構築",
-        "url": "https://www.netdenjd.com/archives/698787",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-5",
-        "tags": [
-          "オートバックス"
-        ],
-        "time": "",
-        "title": "オートバックスセブン、スーパーオートバックス大野城御笠川店をリニューアル",
-        "url": "https://www.netdenjd.com/archives/698684",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-6",
-        "tags": [
-          "カーナビ"
-        ],
-        "time": "",
-        "title": "撤退相次ぐ市販用カーナビ、スマホアプリ台頭で需要縮小　新規領域にリソース再配分",
-        "url": "https://www.netdenjd.com/archives/698520",
-        "summary": "パナソニックオートモーティブシステムズが市販カーナビの生産を2027年3月までに終了し、三菱電機も撤退。スマホナビアプリの普及で需要が縮小し、パイオニアは音声ナビNP1とアプリ「コッチ」を2026年11月末で終了。各社は新規領域へリソースを再配分。"
-      },
-      {
-        "id": "2026年9月29日-7",
-        "tags": [
-          "ウィーカーズ"
-        ],
-        "time": "",
-        "title": "ウィーカーズ、10月に人事制度改定　残業や有休見直しで働きやすい職場づくりへ",
-        "url": "https://www.netdenjd.com/archives/698394",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-8",
-        "tags": [
-          "自動運転"
-        ],
-        "time": "",
-        "title": "筑波大学構内を中心に自動運転バスがレベル2運行　27年度にはレベル4目指す",
-        "url": "https://www.netdenjd.com/archives/698799",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-9",
-        "tags": [
-          "自動運転"
-        ],
-        "time": "",
-        "title": "東京工科大と日本工学院八王子校、地域交流会で自動運転スクールバスの取り組みアピール",
-        "url": "https://www.netdenjd.com/archives/697787",
-        "summary": "東京工科大学と日本工学院八王子専門学校は、2026年9月21日に東京都八王子市のキャンパスで第13回産官学連携による八王子近隣地域交流会を開催し、八王子市と連携したAIを用いた自動運転スクールバスの実証実験・取り組みを地域住民にアピールした。"
-      },
-      {
-        "id": "2026年9月29日-10",
-        "tags": [
-          "NGP"
-        ],
-        "time": "",
-        "title": "NGP、愛知・豊田市に臨時ヤード　豪雨の被災車引き上げ",
-        "url": "https://www.netdenjd.com/archives/698383",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-11",
-        "tags": [
-          "NGP"
-        ],
-        "time": "",
-        "title": "8月の千葉豪雨、NGPが15台の救援車両で被災車引き取り　電子制御化が作業妨げの一因にも",
-        "url": "https://www.netdenjd.com/archives/698031",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-12",
-        "tags": [
-          "NGP"
-        ],
-        "time": "",
-        "title": "NGP、愛知・岐阜大雨の被災車引き上げへ　千葉豪雨に続き臨時ヤード準備",
-        "url": "https://www.netdenjd.com/archives/697220",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-13",
-        "tags": [
-          "自動運転"
-        ],
-        "time": "",
-        "title": "〈会見概要〉自工会記者会見　自動運転での協調へ「技術は世界で負けていない」",
-        "url": "https://www.netdenjd.com/archives/697868",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-14",
-        "tags": [
-          "新車"
-        ],
-        "time": "",
-        "title": "新潟県の2026年8月新車販売、5カ月連続増加",
-        "url": "https://www.netdenjd.com/archives/698015",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-15",
-        "tags": [
-          "リサイクル"
-        ],
-        "time": "",
-        "title": "使用済み車調達難のリサイクル事業者、収益拡大へ工程見直しや新事業立ち上げ",
-        "url": "https://www.netdenjd.com/archives/698371",
-        "summary": ""
-      },
-      {
-        "id": "2026年9月29日-16",
-        "tags": [
-          "自動運転"
-        ],
-        "time": "",
-        "title": "国交省、スバル・T2・ヤマト運輸と東北自動車道で路車協調システムの実証　自動運転レベル4の実現へ",
-        "url": "https://www.netdenjd.com/archives/698516",
         "summary": ""
       }
     ]
